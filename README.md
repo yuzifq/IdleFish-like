@@ -1,13 +1,13 @@
 # 仿闲鱼二手交易首页 / Xianyu-like Second-hand Market Homepage
 
-# 项目简介 Project Overview
+## 项目简介 Project Overview
 
 - 中文：本项目是一个仿闲鱼的二手交易网页首页，主要用于课程《高级网页设计》的练习与展示。
 - EN: This project is a Xianyu-style second-hand trading homepage, built as a practice and demo for the “Advanced Web Design” course.
 
 ---
 
-# 功能特点 Features
+## 功能特点 Features
 
 - 中文：
   - 顶部导航栏与搜索框，支持热搜词展示
@@ -29,7 +29,7 @@
 
 ---
 
-# 技术栈 Tech Stack
+## 技术栈 Tech Stack
 
 - HTML5 + CSS3
 - 原生 JavaScript（无框架）
@@ -38,7 +38,7 @@
 
 ---
 
-# 项目结构 Project Structure
+## 项目结构 Project Structure
 
 ```text
 .
