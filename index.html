@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="./css/css.css" />
+  <script src="./script.js"></script>
+</head>
+<body>
+  <div class="viewport">
+    <!-- 顶部黄条背景 -->
+    <div class="top-bar">
+      <div class="top-bar-main page">
+      </div>
+    </div>
+
+    <!-- 主体外层包裹容器 -->
+    <div class="main-wrapper">
+      <div class="main-content page">
+        <!-- 左侧分类 -->
+        <div class="sidebar cate-left">
+        </div>
+
+        <!-- 白色面板：分类详情悬浮层 -->
+        <div class="cate-panel" style="display:none;">
+        </div>
+
+        <!-- 中间大图（>1440 时显示） -->
+        <a class="hero-banner" href="#">
+        </a>
+
+        <!-- 右侧四宫格卡片区域 -->
+        <div class="category-grid">
+        </div>
+      </div>
+    </div>
+
+    <!-- 新容器：顶部为选项，下方为瀑布流 -->
+    <div class="feed-box">
+      <div class="page">
+        <!-- 顶部频道选项 -->
+        <div class="feed-tabs" role="tablist" aria-label="精选频道">
+        </div>
+
+        <!-- 卡片模版（不渲染，仅用于克隆） -->
+        <template id="feed-card-tpl">
+          <a class="feed-card" href="#">
+            <img src="" alt="">
+            <div class="feed-info">
+              <div class="feed-title"></div>
+              <div class="feed-attr"></div>
+              <div class="feed-bottom">
+                <span style="color:#f40;font-size:16px;font-weight:700;font-family:xianyubeta,sans-serif;">¥</span>
+                <div class="feed-price"></div>
+                <div class="feed-wish"></div>
+              </div>
+              <div class="feed-user">
+                <div class="user-info">
+                  <img class="user-avatar" alt="">
+                  <div class="user-name"></div>
+                </div>
+                <div class="user-tag"></div>
+              </div>
+            </div>
+          </a>
+        </template>
+
+        <!-- 内容区：每个频道一个面板 -->
+        <div class="feed-panels">
+        </div>
+      </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+      <div class="footer-inner">
+      </div>
+    </footer>
+
+    <!-- 右侧悬浮工具条 -->
+    <div class="toolbar">
+    </div>
+  </div>
+</body>
+</html>

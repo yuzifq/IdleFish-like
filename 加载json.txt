@@ -1,0 +1,29 @@
+用 pm2 管理（简单好用）
+
+
+npm install -g pm2
+
+cd /www/wwwroot/forzy.love/mock-api
+pm2 start server.js --name mock-api
+
+# 可选：开机自启
+pm2 save
+pm2 startup
+
+
+之后可以用：
+
+
+pm2 status 
+
+看状态
+
+
+pm2 restart mock-api 
+
+重启
+
+
+pm2 logs mock-api 
+
+看日志
