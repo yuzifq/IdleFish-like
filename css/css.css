@@ -24,7 +24,7 @@ html, body {
 /* ========== 顶部导航区域样式 ========== */
 .top-bar {
   background: #ffe60f;  /* 顶部导航栏背景设置为亮黄色 */
-  padding: 0 16px;
+  padding: 0 0px;
   min-width: 1040px;
 }
 
@@ -32,7 +32,7 @@ html, body {
   display: flex;  /* 使用 flex 布局，让子元素水平排列 */
   align-items: center;  /* 垂直方向居中对齐 */
   justify-content: space-between;  /* 主轴上左右两端对齐，中间留空 */
-  padding: 6px 0;  /* 上下内边距为 6px，左右为 0 */
+  padding: 6px 16px;  /* 上下内边距为 6px，左右为 0 */
 }
 
 /* 顶部右侧整体容器（搜索 + 用户） */
@@ -40,7 +40,7 @@ html, body {
   display: flex;
   align-items: center;
   gap: 98px;           /* 搜索与用户之间的间距 */
-  margin-right: 28px;
+  padding-right: 12px;
 }
 
 /* 搜索容器（包含搜索框与热搜词整体） */
@@ -274,7 +274,7 @@ html, body {
   height: 12px;                  /* 图标高度 12px */
   margin-top: 2px;
   flex: 0 0 auto;                /* 固定大小不缩放 */
-  background: center / contain no-repeat url('../font/pus.png'); /* 默认箭头图标 */
+  background: center / contain no-repeat url('/images/home_ui/pus.png'); /* 默认箭头图标 */
 }
 
 /* 仅当 hover 在 a（文字+箭头）时一起变化 */
@@ -282,7 +282,7 @@ html, body {
   color: #f58300;                /* 悬停时文字变橙色 */
 }
 .cate-sub-left a:hover .icon {
-  background-image: url('../font/pusing.png'); /* 悬停时箭头换为高亮图标 */
+  background-image: url('/images/home_ui/pusing.png'); /* 悬停时箭头换为高亮图标 */
 }
 
 /* 右边内容区（自动换行） */
@@ -846,6 +846,7 @@ html, body {
   padding: 9px 0; /* 上下内边距16px，左右为0 */
   width: 66px; /* 固定宽度为66px */
   z-index: 99; /* 层级较高，保证浮动栏显示在最前面 */
+  /* 首页隐藏“闲鱼号”（icon-3） */
 }
 
 .tool-item {
@@ -875,18 +876,21 @@ html, body {
   opacity: 1;
 }
 
-.icon-1 .icon { background-image: url('../font/ui-1.apng'); }
-.icon-1:hover .icon { background-image: url('../font/ui-11.png'); }
-.icon-2 .icon { background-image: url('../font/ui-2.png'); }
-.icon-2:hover .icon { background-image: url('../font/ui-22.png'); } 
-.icon-3 .icon { background-image: url('../font/ui-3.png'); }
-.icon-3:hover .icon { background-image: url('../font/ui-33.png'); } 
-.icon-4 .icon { background-image: url('../font/ui-4.png'); }
-.icon-4:hover .icon { background-image: url('../font/ui-44.png'); } 
-.icon-5 .icon { background-image: url('../font/ui-5.png'); }
-.icon-5:hover .icon { background-image: url('../font/ui-55.png'); } 
-.icon-6 .icon { background-image: url('../font/ui-6.png'); }
-.icon-6:hover .icon { background-image: url('../font/ui-66.png'); } 
+.icon-1 .icon { background-image: url('/images/home_ui/ui-1.apng'); }
+.icon-1:hover .icon { background-image: url('/images/home_ui/ui-11.png'); }
+.icon-2 .icon { background-image: url('/images/home_ui/ui-2.png'); }
+.icon-2:hover .icon { background-image: url('/images/home_ui/ui-22.png'); } 
+.icon-3 .icon { background-image: url('/images/home_ui/ui-3.png'); }
+.icon-3:hover .icon { background-image: url('/images/home_ui/ui-33.png'); } 
+.icon-4 .icon { background-image: url('/images/home_ui/ui-4.png'); }
+.icon-4:hover .icon { background-image: url('/images/home_ui/ui-44.png'); } 
+.icon-5 .icon { background-image: url('/images/home_ui/ui-5.png'); }
+.icon-5:hover .icon { background-image: url('/images/home_ui/ui-55.png'); } 
+.icon-6 .icon { background-image: url('/images/home_ui/ui-6.png'); }
+.icon-6:hover .icon { background-image: url('/images/home_ui/ui-66.png'); } 
+.icon-7 .icon { background-image: url('/images/home_ui/ui-7.png'); }
+.icon-7:hover .icon { background-image: url('/images/home_ui/ui-77.png'); }
+
 
 .badge {
   position: absolute; /* 绝对定位，使其相对于图标自由摆放 */
@@ -915,6 +919,39 @@ html, body {
   margin: 4px 0; /* 上下外边距4px */
 }
 
+/* ========== APP 二维码悬浮层 ========== */
+.app-qrcode-popover {
+  position: fixed;              /* 固定定位在屏幕右侧中部 */
+  right: 94px;                  /* 预留右侧工具条宽度 */
+  top: 50%;                     /* 垂直居中 */
+  transform: translateY(-50%);  /* 精准垂直居中 */
+  z-index: 100;                 /* 确保浮层在最前面 */
+  display: none;                /* 默认隐藏，悬停时显示 */
+}
+
+.app-qrcode-inner {
+  background: #ffffff;                /* 白色背景 */
+  padding: 20px 14px;                 /* 上下左右间距 */
+  border-radius: 16px;                /* 圆角气泡效果 */
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18); /* 阴影提升浮层层次 */
+  text-align: center;                 /* 内容居中 */
+  font-weight: bold;                  /* 整体文字加粗 */
+}
+
+.app-qrcode-img {
+  width: 114.4px;                     /* 图片宽度 */
+  height: 114.4px;                    /* 图片高度 */
+  display: block;                     /* 消除 inline-block 间距 */
+  margin: 0 auto;                     /* 居中显示 */
+}
+
+.app-qrcode-title {
+  margin-top: 10px;                    /* 与二维码保持间距 */
+  font-size: 16px;                    /* 字号 */
+  color: #1f1f1f;                        /* 深灰色 */
+  font-weight: bold;                  /* 标题部分加粗 */
+}
+
 
 /* 视口宽度 >= 1440px 时的宽屏布局 */
 @media (min-width: 1440px) {
@@ -931,6 +968,7 @@ html, body {
 
   .search-container {
     width: 752px;
+    margin-right: 5px;
   }
 
   .cate-panel {
@@ -954,7 +992,7 @@ html, body {
   }
 
   .search-container {
-    width: 1080px;
+    width: 1008px;
   }
 
   .cate-panel {

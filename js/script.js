@@ -1,4 +1,16 @@
-document.addEventListener('DOMContentLoaded', initPage);
+document.addEventListener('DOMContentLoaded', () => {
+  const path = window.location.pathname || '';
+
+  // 只要路径里带 my.html，就认为是“我的”页面
+  const isMyPage = path.includes('/myself');
+
+  if (isMyPage) {
+    initMyPage();
+  } else {
+    initPage();   // 原来的首页初始化
+  }
+});
+
 
     async function initPage() {
       try {
@@ -27,6 +39,7 @@ document.addEventListener('DOMContentLoaded', initPage);
 
         renderMeta(meta);
         renderHeader(header);
+        initSearchPlaceholderRotation(header);  // ★ 开启搜索词轮播
         renderSidebar(sidebar);
         renderHeroBanner(heroBanner);
         renderCategoryCards(categoryCards);
@@ -37,10 +50,48 @@ document.addEventListener('DOMContentLoaded', initPage);
         initCategoryHover();
         initFeeds(feeds);
         initBackToTop(toolbar && toolbar.backToTopConfig);
+        initAppQrHover(); // APP 悬浮二维码
       } catch (e) {
         console.error('从 json-server 加载数据失败：', e);
       }
     }
+    
+    
+    
+    // =============== 我的页面：从 json-server 读取数据 ===============
+    async function initMyPage() {
+      try {
+        const baseURL = '/api';
+    
+        const [
+          meta,
+          header,
+          footer,
+          toolbar,
+          myselfData
+        ] = await Promise.all([
+          fetch(baseURL + '/meta').then(r => r.json()),
+          fetch(baseURL + '/header').then(r => r.json()),
+          fetch(baseURL + '/footer').then(r => r.json()),
+          fetch(baseURL + '/toolbar').then(r => r.json()),
+          fetch(baseURL + '/myself').then(r => r.json())
+        ]);
+    
+        renderMeta(meta);
+        renderHeader(header);
+        renderFooter(footer);
+        renderToolbar(toolbar);
+    
+        renderMyself(myselfData);
+    
+        initBackToTop(toolbar && toolbar.backToTopConfig);
+        initAppQrHover();
+      } catch (e) {
+        console.error('从 json-server 加载 我的页面 数据失败：', e);
+      }
+    }
+    
+    
 
     /* =============== meta / 头部 =============== */
     function renderMeta(meta) {
@@ -92,7 +143,7 @@ document.addEventListener('DOMContentLoaded', initPage);
         <div class="search-box">
           <input placeholder="${search.placeholder || ''}" />
           <button>
-            <img src="${search.buttonIcon || './font/search.png'}"
+            <img src="${search.buttonIcon || '/images/home_ui/search.png'}"
                  alt="Search Icon"
                  style="width:16px;height:16px;margin-right:2px;" />
             <span>${search.buttonText || '搜索'}</span>
@@ -309,7 +360,7 @@ document.addEventListener('DOMContentLoaded', initPage);
 
         const arrow = document.createElement('img');
         // 标题右边的小箭头：优先用 data.json 的 titleIcon，没有就用默认
-        arrow.src = card.titleIcon || './font/jiantou.png';
+        arrow.src = card.titleIcon || '/images/home_ui/jiantou.png';
         arrow.style.width = '14px';
         arrow.style.height = '14px';
         arrow.style.marginTop = '3px';
@@ -471,7 +522,7 @@ document.addEventListener('DOMContentLoaded', initPage);
         const titleEl = node.querySelector('.feed-title');
         titleEl.innerHTML = '';
         const iconPool = [
-          './font/baoyou.png',
+          '/images/home_ui/baoyou.png',
           '' // 不显示
         ];
         const iconUrl = pick(iconPool);
@@ -487,9 +538,9 @@ document.addEventListener('DOMContentLoaded', initPage);
         const attrEl = node.querySelector('.feed-attr');
         attrEl.innerHTML = '';
         const attrIcons = [
-          { src: './font/recent.png',    width: 85.95, height: 19 },
-          { src: './font/bao.png',       width: 45.6,  height: 16.8 },
-          { src: './font/baoyoutui.png', width: 91.2,  height: 16.8 },
+          { src: '/images/home_ui/recent.png',    width: 85.95, height: 19 },
+          { src: '/images/home_ui/bao.png',       width: 45.6,  height: 16.8 },
+          { src: '/images/home_ui/baoyoutui.png', width: 91.2,  height: 16.8 },
           { src: '',                     width: 45,    height: 18 } // 空占位
         ];
         const pickAttrIcon = () => attrIcons[Math.floor(Math.random() * attrIcons.length)];
@@ -815,29 +866,49 @@ document.addEventListener('DOMContentLoaded', initPage);
     /* =============== 右侧工具条 =============== */
     function renderToolbar(toolbar) {
       const box = document.querySelector('.toolbar');
+      const pop = document.querySelector('.app-qrcode-popover');
       if (!box || !toolbar || !Array.isArray(toolbar.items)) return;
+    
+      // ★ 根据当前路径判断是不是“我的”页面
+      const path = window.location.pathname || '';
+      const isMyPage = path.includes('/myself');
+    
+      // ★ 先按 onlyOn 过滤 item：
+      //   - onlyOn: "myself" 只在 myself 页面显示
+      //   - onlyOn: "home"   只在首页显示（以后要用的话）
+      const items = toolbar.items.filter(item => {
+        if (item.onlyOn === 'myself' && !isMyPage) return false;
+        if (item.onlyOn === 'home' &&  isMyPage) return false;
+        return true;
+      });
+    
       box.innerHTML = '';
-
-      toolbar.items.forEach((item, index) => {
-        const isBackToTop = item.id === 'backToTop' || item.iconClass === 'icon-6';
-
+      if (pop) pop.innerHTML = '';   // 先清空弹层
+    
+      // ★ 把原来的 toolbar.items.forEach 改成 items.forEach
+      items.forEach((item, index) => {
+        const isBackToTop = item.id === 'backToTop' || item.iconClass === 'icon-7';
+    
+        // 分隔线
         if (index > 0) {
           const hr = document.createElement('hr');
-          if (isBackToTop) {
-            hr.style.display = 'none';
-          }
+          if (isBackToTop) hr.style.display = 'none';
           box.appendChild(hr);
         }
-
+    
+        // 按钮本体
         const div = document.createElement('div');
         div.className = 'tool-item ' + (item.iconClass || '');
+        div.dataset.id = item.id || '';
+    
         if (isBackToTop) {
           div.id = 'backToTop';
           div.style.display = 'none';
         }
-
+    
         const iconDiv = document.createElement('div');
         iconDiv.className = 'icon';
+    
         if (typeof item.badge === 'number' && item.badge > 0) {
           const badge = document.createElement('span');
           badge.className = 'badge';
@@ -845,24 +916,44 @@ document.addEventListener('DOMContentLoaded', initPage);
           iconDiv.appendChild(badge);
         }
         div.appendChild(iconDiv);
-
+    
         const labelDiv = document.createElement('div');
         labelDiv.className = 'label';
         labelDiv.textContent = item.label || '';
         div.appendChild(labelDiv);
-
+    
         box.appendChild(div);
+
+        // 给有二维码配置的按钮挂上数据（APP、闲鱼号等）
+        if (item.popover && pop) {
+          div.dataset.qrTitle = item.popover.title || '';
+    
+          if (item.popover.img) {
+            div.dataset.qrImg      = item.popover.img.src  || '';
+            div.dataset.qrImgAlt   = item.popover.img.alt  || '';
+            div.dataset.qrImgClass = item.popover.img.class || 'app-qrcode-img';
+          }
+    
+          div.dataset.qrClass = item.popover.class || 'app-qrcode-inner';
+        }
       });
     }
 
+    
     function initBackToTop(config) {
+      // 可滚动容器（你的页面中是 .viewport）
       const viewport = document.querySelector('.viewport');
+      // “回顶部”按钮（在 renderToolbar 里给它设了 id="backToTop"）
       const btn = document.getElementById('backToTop');
+      // 按钮前面的分隔线（用于跟着一起显示 / 隐藏）
       const hr = btn ? btn.previousElementSibling : null;
+    
       if (!viewport || !btn) return;
-
+    
+      // 触发显示“回顶部”的滚动距离阈值，来自 JSON 配置；没有就默认 1000
       const threshold = config && config.scrollTopToShow ? config.scrollTopToShow : 1000;
-
+    
+      // 监听滚动，超过阈值显示按钮，否则隐藏
       viewport.addEventListener('scroll', function () {
         if (viewport.scrollTop > threshold) {
           btn.style.display = 'flex';
@@ -872,8 +963,427 @@ document.addEventListener('DOMContentLoaded', initPage);
           if (hr) hr.style.display = 'none';
         }
       });
-
+    
+      // 点击按钮平滑滚回顶部
       btn.addEventListener('click', function () {
         viewport.scrollTo({ top: 0, behavior: 'smooth' });
       });
+    }
+    
+    //搜索栏轮播
+    function initSearchPlaceholderRotation(header) {
+      if (!header || !header.search || !Array.isArray(header.search.hotWords)) return;
+    
+      const input = document.querySelector('.search-box input');
+      const words = header.search.hotWords;
+      let index = 0;
+      let timer = null;
+    
+      if (!input || words.length === 0) return;
+    
+      function start() {
+        timer = setInterval(() => {
+          index = (index + 1) % words.length;
+          input.placeholder = words[index];
+        }, 3500);
+      }
+    
+      function stop() {
+        clearInterval(timer);
+        timer = null;
+      }
+    
+      // 输入框聚焦时暂停轮播
+      input.addEventListener('focus', stop);
+      // 失焦时继续轮播
+      input.addEventListener('blur', () => {
+        if (!timer) start();
+      });
+    
+      // 初始化
+      start();
+    }
+    
+    
+    /* =============== APP 二维码悬停 =============== */
+    function initAppQrHover() {
+      const toolbar = document.querySelector('.toolbar');
+      const pop = document.querySelector('.app-qrcode-popover');
+      if (!toolbar || !pop) return;
+    
+      // 所有带 data-qr-title 的按钮（APP、闲鱼号）
+      const triggers = toolbar.querySelectorAll('.tool-item[data-qr-title]');
+      if (!triggers.length) return;
+    
+      let hideTimer = null;
+    
+      function showFromTrigger(el) {
+        clearTimeout(hideTimer);
+    
+        const title  = el.dataset.qrTitle || '';
+        const imgSrc = el.dataset.qrImg || '';
+        const imgAlt = el.dataset.qrImgAlt || '';
+        const imgCls = el.dataset.qrImgClass || 'app-qrcode-img';
+        const boxCls = el.dataset.qrClass || 'app-qrcode-inner';
+    
+        // 先清空，再按当前按钮配置重建内容
+        pop.innerHTML = '';
+    
+        const inner = document.createElement('div');
+        inner.className = boxCls;
+    
+        if (imgSrc) {
+          const img = document.createElement('img');
+          img.className = imgCls;
+          img.src = imgSrc;
+          img.alt = imgAlt;
+          inner.appendChild(img);
+        }
+    
+        if (title) {
+          const titleDiv = document.createElement('div');
+          titleDiv.className = 'app-qrcode-title';
+          titleDiv.textContent = title;
+          inner.appendChild(titleDiv);
+        }
+    
+        pop.appendChild(inner);
+        pop.style.display = 'block';
+      }
+    
+      function hideLater() {
+        hideTimer = setTimeout(() => {
+          pop.style.display = 'none';
+        }, 150);
+      }
+    
+      // 悬停在任意触发按钮（APP / 闲鱼号）时显示对应弹层
+      triggers.forEach(el => {
+        el.addEventListener('mouseenter', () => showFromTrigger(el));
+        el.addEventListener('mouseleave', hideLater);
+      });
+    
+      // 鼠标移到弹层上保持显示
+      pop.addEventListener('mouseenter', () => clearTimeout(hideTimer));
+      pop.addEventListener('mouseleave', hideLater);
+    }
+    
+    
+    
+    
+    
+    
+    /* =============== 我的页面渲染 =============== */
+    function renderMyself(data) {
+      if (!data) return;
+    
+      // ⭐ 新增：渲染左侧菜单
+      if (data.menu) {
+        renderMyMenu(data.menu);
+      }
+    
+      const profile = data.profile || {};
+      const tabs    = data.tabs || {};
+      const goods   = Array.isArray(data.goods) ? data.goods : [];
+    
+      // --- 头像与个人信息 ---
+      const avatarEl   = document.querySelector('.my-avatar');
+      const nickEl     = document.querySelector('.my-nickname');
+      const levelTagEl = document.querySelector('.my-level-tag');
+      const metaEl     = document.querySelector('.my-profile-meta');
+      const descEl     = document.querySelector('.my-profile-desc');
+      const editBtnEl  = document.querySelector('.my-edit-btn');
+    
+      if (avatarEl && profile.avatar) {
+        avatarEl.src = profile.avatar;
+      }
+      if (nickEl) {
+        nickEl.textContent = profile.nickname || '';
+      }
+      if (levelTagEl) {
+        // 清空容器，准备塞图片
+        levelTagEl.innerHTML = '';
+      
+        const tags = profile.levelTag;
+      
+        if (Array.isArray(tags)) {
+          // 如果是数组，就循环生成多张图片
+          tags.forEach(src => {
+            if (!src) return;
+            const img = document.createElement('img');
+            img.className = 'my-credit-img';
+            img.src = src;
+            img.alt = '';
+            img.style.objectFit = 'fill';   // 和你截图里的 style 一致
+            levelTagEl.appendChild(img);
+          });
+        } else if (typeof tags === 'string' && tags.trim() !== '') {
+          // 兼容：如果将来又填成字符串，就显示文字
+          levelTagEl.textContent = tags;
+        }
+      }
+      if (metaEl) {
+        const loc   = profile.location || '';
+        const fans  = profile.fans != null ? profile.fans : '';
+        const focus = profile.follows != null ? profile.follows : '';
+
+        // 清空容器，改成和闲鱼一样的：辽宁省 | 15粉丝 | 2关注
+        metaEl.innerHTML = '';
+
+        // 工具函数：加一条竖线
+        const addLine = () => {
+          const line = document.createElement('span');
+          line.className = 'my-profile-meta-line';
+          metaEl.appendChild(line);
+        };
+
+        // 省份
+        if (loc) {
+          const span = document.createElement('span');
+          span.className = 'my-profile-meta-item';
+          span.textContent = loc;
+          metaEl.appendChild(span);
+        }
+
+        // 粉丝
+        if (fans !== '') {
+          if (metaEl.children.length) addLine();
+          const span = document.createElement('span');
+          span.className = 'my-profile-meta-item';
+          span.textContent = `${fans}粉丝`;
+          metaEl.appendChild(span);
+        }
+
+        // 关注
+        if (focus !== '') {
+          if (metaEl.children.length) addLine();
+          const span = document.createElement('span');
+          span.className = 'my-profile-meta-item';
+          span.textContent = `${focus}关注`;
+          metaEl.appendChild(span);
+        }
+      }
+      if (descEl) {
+        descEl.textContent = profile.desc || '';
+      }
+      if (editBtnEl) {
+        // 用 JSON 里的 btn，如果没填就用原本按钮上的文字或默认值
+        editBtnEl.textContent = profile.btn || editBtnEl.textContent || '编辑资料';
+      }
+
+    
+      // --- 顶部 tabs：宝贝 / 评价 ---
+      const tabsHeader = document.querySelector('.my-tabs-header');
+      if (tabsHeader) {
+        tabsHeader.innerHTML = '';
+    
+        const goodsBtn = document.createElement('button');
+        goodsBtn.className = 'my-tab-btn my-tab-active';
+        goodsBtn.textContent =
+          (tabs.goodsLabel || '宝贝') + ' ' + (tabs.goodsCount != null ? tabs.goodsCount : '');
+    
+        const creditBtn = document.createElement('button');
+        creditBtn.className = 'my-tab-btn';
+        creditBtn.textContent =
+          (tabs.creditLabel || '信用及评价') + ' ' + (tabs.creditCount != null ? tabs.creditCount : '');
+    
+        tabsHeader.appendChild(goodsBtn);
+        tabsHeader.appendChild(creditBtn);
+      }
+    
+      // --- 宝贝列表 ---
+      const goodsGrid = document.querySelector('.my-goods-grid');
+      if (goodsGrid) {
+        goodsGrid.innerHTML = '';
+    
+        goods.forEach(item => {
+          const card = document.createElement('article');
+          card.className = 'my-good-card';
+    
+          const img = document.createElement('img');
+          img.src = item.img || '';
+          img.alt = item.title || '';
+          card.appendChild(img);
+    
+          const title = document.createElement('h3');
+          title.className = 'my-good-title';
+          title.textContent = item.title || '';
+          card.appendChild(title);
+    
+          const priceRow = document.createElement('div');
+          priceRow.className = 'my-good-price-row';
+    
+          const symbol = document.createElement('span');
+          symbol.className = 'my-good-price-symbol';
+          symbol.textContent = item.currency || '¥';
+          priceRow.appendChild(symbol);
+    
+          const price = document.createElement('span');
+          price.className = 'my-good-price';
+          price.textContent =
+            item.price != null ? item.price : '';
+          priceRow.appendChild(price);
+    
+          if (item.unit) {
+            const unit = document.createElement('span');
+            unit.className = 'my-good-price-unit';
+            unit.textContent = item.unit;
+            priceRow.appendChild(unit);
+          }
+    
+          card.appendChild(priceRow);
+          goodsGrid.appendChild(card);
+        });
+      }
+    }
+
+
+
+
+
+
+
+    // 渲染“我的”左侧菜单
+    function renderMyMenu(menu) {
+      const sider = document.querySelector('.my-sider');
+      if (!sider || !Array.isArray(menu)) return;
+    
+      sider.innerHTML = '';
+    
+      // 外层 ul
+      const ul = document.createElement('ul');
+      ul.className = 'my-nav-list';
+      sider.appendChild(ul);
+    
+      menu.forEach(item => {
+        const hasChildren = Array.isArray(item.children) && item.children.length > 0;
+    
+        // li
+        const li = document.createElement('li');
+        li.className = 'my-nav-item';
+        if (hasChildren) li.classList.add('my-nav-item--has-children');
+        if (item.expanded) li.classList.add('is-open');
+        ul.appendChild(li);
+    
+        // 顶部 a（图标 + 文本 + 箭头）
+        const a = document.createElement('a');
+        a.href = item.href || 'javascript:void(0)';
+        a.className = 'my-nav-link';
+        if (hasChildren) a.classList.add('my-nav-link--parent');
+        if (item.active) a.classList.add('is-active');
+        li.appendChild(a);
+    
+        const leftBox = document.createElement('div');
+        leftBox.className = 'my-nav-left';
+        a.appendChild(leftBox);
+    
+        if (item.icon) {
+          const img = document.createElement('img');
+          img.className = 'my-nav-icon';
+          img.src = item.icon;
+          img.alt = item.label || '';
+          leftBox.appendChild(img);
+        }
+    
+        const text = document.createElement('span');
+        text.className = 'my-nav-text';
+        text.textContent = item.label || '';
+        leftBox.appendChild(text);
+    
+        let subUl = null;
+    
+        if (hasChildren) {
+          const arrow = document.createElement('span');
+          arrow.className = 'my-nav-arrow';
+          arrow.innerHTML = '▾';
+          a.appendChild(arrow);
+    
+          // 子菜单 ul
+          subUl = document.createElement('ul');
+          subUl.className = 'my-nav-sublist';
+          li.appendChild(subUl);
+    
+          item.children.forEach(child => {
+            const subLi = document.createElement('li');
+            subLi.className = 'my-nav-subitem';
+            subUl.appendChild(subLi);
+    
+            const subA = document.createElement('a');
+            subA.href = child.href || '#';
+            subA.textContent = child.label || '';
+            if (child.active) subA.classList.add('is-active');
+            subLi.appendChild(subA);
+          });
+        }
+      });
+    
+      // 初始化展开高度 & 绑定点击事件
+      initMyMenuToggle();
+    }
+    
+    // 折叠菜单：高度动画 + 侧边卡片固定高度
+    function initMyMenuToggle() {
+      const sider  = document.querySelector('.my-sider');               // 白色外框
+      const groups = document.querySelectorAll('.my-nav-item--has-children'); // 有子菜单的两个 li
+    
+      if (!sider || groups.length === 0) return;
+    
+      // 根据当前展开状态，设置侧边卡片高度
+      function setCardHeight() {
+        if (groups.length < 2) return; // 防御一下，正常是两个：我的交易、账户设置
+    
+        const tradeOpen   = groups[0].classList.contains('is-open'); // 我的交易
+        const accountOpen = groups[1].classList.contains('is-open'); // 账户设置
+    
+        let h = 208; // 默认：两个都收起
+    
+        if (tradeOpen && !accountOpen) {
+          // 只开“我的交易”
+          h = 352;
+        } else if (!tradeOpen && accountOpen) {
+          // 只开“账户设置”
+          h = 304;
+        } else if (tradeOpen && accountOpen) {
+          // 两个都展开
+          h = 448;
+        }
+    
+        sider.style.height = h + 'px';
+      }
+    
+      // 初始化子菜单高度 & 绑定点击事件
+      groups.forEach(group => {
+        const parentLink = group.querySelector('.my-nav-link--parent');
+        const sublist    = group.querySelector('.my-nav-sublist');
+        if (!parentLink || !sublist) return;
+    
+        // 初始子菜单高度（根据 is-open 类）
+        if (group.classList.contains('is-open')) {
+          sublist.style.height = sublist.scrollHeight + 'px';
+        } else {
+          sublist.style.height = '0px';
+        }
+    
+        parentLink.addEventListener('click', e => {
+          e.preventDefault();
+    
+          const isOpen = group.classList.toggle('is-open');
+    
+          if (isOpen) {
+            const h = sublist.scrollHeight;
+            sublist.style.height = h + 'px';
+          } else {
+            sublist.style.height = '0px';
+          }
+    
+          // 每次点击都重新算外框高度
+          setCardHeight();
+        });
+      });
+    
+      // 页面加载完，根据默认展开状态设置一次高度
+      setCardHeight();
+    
+      // （可选）窗口大小变化时再设一次高度，保证不乱
+      window.addEventListener('resize', setCardHeight);
     }

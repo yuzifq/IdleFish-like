@@ -278,4 +278,9 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Dependency directories
+node_modules/
+**/node_modules/
+
 >>>>>>> ffedc8f0c4e1b545e0d8b8beb01b3ac317c7cbe0

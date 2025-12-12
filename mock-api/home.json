@@ -1,12 +1,12 @@
 {
   "meta": {
     "title": "仿闲鱼",
-    "favicon": "./font/top.png"
+    "favicon": "/images/home_ui/top.png"
   },
   "header": {
     "logo": {
-      "link": "https://www.forzy.love/",
-      "img": "./images/xy.png",
+      "link": "https://forzy.love/",
+      "img": "/images/home_img/xy.png",
       "width": 240,
       "height": 72,
       "alt": "logo"
@@ -14,7 +14,7 @@
     "search": {
       "placeholder": "手机",
       "buttonText": "搜索",
-      "buttonIcon": "./font/search.png",
+      "buttonIcon": "/images/home_ui/search.png",
       "hotWords": [
         "手机",
         "苹果13",
@@ -30,12 +30,12 @@
     },
     "userMenu": [
       {
-        "icon": "./font/myself.png",
-        "label": "名字",
-        "href": "#"
+        "icon": "/images/home_ui/myself.png",
+        "label": "名字111",
+        "href": "/myself"
       },
       {
-        "icon": "./font/order.png",
+        "icon": "/images/home_ui/order.png",
         "label": "订单",
         "href": "#"
       }
@@ -45,7 +45,7 @@
     "categories": [
       {
         "id": 1,
-        "icon": "./font/menu1.png",
+        "icon": "/images/home_ui/menu1.png",
         "labels": ["手机", "数码", "电脑"],
         "panel": [
           {
@@ -180,7 +180,7 @@
       },
       {
         "id": 2,
-        "icon": "./font/menu2.png",
+        "icon": "/images/home_ui/menu2.png",
         "labels": ["服饰", "箱包", "运动"],
         "panel": [
           {
@@ -337,7 +337,7 @@
       },
       {
         "id": 3,
-        "icon": "./font/menu3.png",
+        "icon": "/images/home_ui/menu3.png",
         "labels": ["技能", "卡券", "潮玩"],
         "panel": [
           {
@@ -471,7 +471,7 @@
       },
       {
         "id": 4,
-        "icon": "./font/menu4.png",
+        "icon": "/images/home_ui/menu4.png",
         "labels": ["母婴", "美妆", "个护"],
         "panel": [
           {
@@ -622,7 +622,7 @@
       },
       {
         "id": 5,
-        "icon": "./font/menu5.png",
+        "icon": "/images/home_ui/menu5.png",
         "labels": ["家具", "家电", "家装"],
         "panel": [
           {
@@ -852,7 +852,7 @@
       },
       {
         "id": 6,
-        "icon": "./font/menu6.png",
+        "icon": "/images/home_ui/menu6.png",
         "labels": ["文玩", "珠宝", "礼品"],
         "panel": [
           {
@@ -949,7 +949,7 @@
       },
       {
         "id": 7,
-        "icon": "./font/menu7.png",
+        "icon": "/images/home_ui/menu7.png",
         "labels": ["食品", "宠物", "花卉"],
         "panel": [
           {
@@ -1077,7 +1077,7 @@
       },
       {
         "id": 8,
-        "icon": "./font/menu8.png",
+        "icon": "/images/home_ui/menu8.png",
         "labels": ["图书", "游戏", "音像"],
         "panel": [
           {
@@ -1157,7 +1157,7 @@
       },
       {
         "id": 9,
-        "icon": "./font/menu9.png",
+        "icon": "/images/home_ui/menu9.png",
         "labels": ["汽车", "电动车", "租房"],
         "panel": [
           {
@@ -1271,7 +1271,7 @@
       },
       {
         "id": 10,
-        "icon": "./font/menu10.png",
+        "icon": "/images/home_ui/menu10.png",
         "labels": ["五金", "设备", "农牧"],
         "panel": [
           {
@@ -1388,7 +1388,7 @@
   },
     "heroBanner": {
     "href": "#",
-    "src": "https://img.alicdn.com/imgextra/i4/O1CN01IWe4SW1zz7svQaW9d_!!6000000006784-2-tps-480-672.png_450x10000.jpg_.webp",
+    "src": "/images/home_img/yincang.png",
     "alt": "活动主图",
     "width": 240,
     "height": 336,
@@ -1398,30 +1398,30 @@
     {
       "id": "fashion",
       "bgColor": "rgb(255, 230, 15)",
-      "bgImage": "./images/11.png",
+      "bgImage": "/images/home_img/11.png",
       "title": "衣橱捡漏",
       "subtitle": "时尚美衣低价淘",
-      "titleIcon": "./font/jiantou.png",
-      "illustration": "./images/1.png",
-      "hoverImage": "./images/1-1.png",
+      "titleIcon": "/images/home_ui/jiantou.png",
+      "illustration": "/images/home_img/1.png",
+      "hoverImage": "/images/home_img/1-1.png",
       "goods": [
         {
           "href": "#",
-          "img": "https://img.alicdn.com/bao/uploaded/i1/O1CN01lVTpdG1tXkUe8AnBE_!!0-fleamarket.jpg_170x10000Q90.jpg_.webp",
+          "img": "/images/home_img/fashion-good1.png",
           "alt": "图一",
           "currency": "¥",
           "price": "46.8"
         },
         {
           "href": "#",
-          "img": "https://img.alicdn.com/bao/uploaded/i4/O1CN0134xvCx24TafMAjdgU_!!53-fleamarket.heic_170x10000Q90.jpg_.webp",
+          "img": "/images/home_img/fashion-good2.png",
           "alt": "图二",
           "currency": "¥",
           "price": "60.5"
         },
         {
           "href": "#",
-          "img": "https://img.alicdn.com/bao/uploaded/i3/O1CN01FDCRun1eo2Oaw3nun_!!53-fleamarket.heic_170x10000Q90.jpg_.webp",
+          "img": "/images/home_img/fashion-good3.png",
           "alt": "图三",
           "currency": "¥",
           "price": "215"
@@ -1431,30 +1431,30 @@
     {
       "id": "digital",
       "bgColor": "rgb(133, 239, 255)",
-      "bgImage": "./images/22.png",
+      "bgImage": "/images/home_img/22.png",
       "title": "手机数码",
       "subtitle": "热门装备省心入",
-      "titleIcon": "./font/jiantou.png",
-      "illustration": "./images/2.png",
-      "hoverImage": "./images/2-2.png",
+      "titleIcon": "/images/home_ui/jiantou.png",
+      "illustration": "/images/home_img/2.png",
+      "hoverImage": "/images/home_img/2-2.png",
       "goods": [
         {
           "href": "#",
-          "img": "https://img.alicdn.com/bao/uploaded/i2/O1CN013rSbeR21tkSAuKpJJ_!!0-fleamarket.jpg_170x10000Q90.jpg_.webp",
+          "img": "/images/home_img/digital-good1.png",
           "alt": "图一",
           "currency": "¥",
           "price": "605"
         },
         {
           "href": "#",
-          "img": "https://img.alicdn.com/bao/uploaded/i4/O1CN01HNGdFJ1ZcWIYBWGiE_!!0-fleamarket.jpg_170x10000Q90.jpg_.webp",
+          "img": "/images/home_img/digital-good2.png",
           "alt": "图二",
           "currency": "¥",
           "price": "2399"
         },
         {
           "href": "#",
-          "img": "https://img.alicdn.com/bao/uploaded/i4/O1CN01LcrxL31pc5rYQVjss_!!4611686018427382676-0-fleamarket.jpg_170x10000Q90.jpg_.webp",
+          "img": "/images/home_img/digital-good3.png",
           "alt": "图三",
           "currency": "¥",
           "price": "1870"
@@ -1464,30 +1464,30 @@
     {
       "id": "anime",
       "bgColor": "rgb(134, 251, 158)",
-      "bgImage": "./images/33.png",
+      "bgImage": "/images/home_img/33.png",
       "title": "二次元",
       "subtitle": "烫门新品随手入",
-      "titleIcon": "./font/jiantou.png",
-      "illustration": "./images/3.png",
-      "hoverImage": "./images/3-3.png",
+      "titleIcon": "/images/home_ui/jiantou.png",
+      "illustration": "/images/home_img/3.png",
+      "hoverImage": "/images/home_img/3-3.png",
       "goods": [
         {
           "href": "#",
-          "img": "https://img.alicdn.com/bao/uploaded/i4/O1CN01fnS4AJ1dp7fVardKa_!!0-fleamarket.jpg_170x10000Q90.jpg_.webp",
+          "img": "/images/home_img/anime-good1.png",
           "alt": "图一",
           "currency": "¥",
           "price": "88.00"
         },
         {
           "href": "#",
-          "img": "https://img.alicdn.com/bao/uploaded/i4/O1CN01rsbES41j73FoGjMwU_!!0-fleamarket.jpg_170x10000Q90.jpg_.webp",
+          "img": "/images/home_img/anime-good2.png",
           "alt": "图二",
           "currency": "¥",
           "price": "60.50"
         },
         {
           "href": "#",
-          "img": "https://img.alicdn.com/bao/uploaded/i3/O1CN01JuTu341LRcFm5tWdw_!!0-fleamarket.jpg_170x10000Q90.jpg_.webp",
+          "img": "/images/home_img/anime-good3.png",
           "alt": "图三",
           "currency": "¥",
           "price": "30.00"
@@ -1497,30 +1497,30 @@
     {
       "id": "coupon",
       "bgColor": "rgb(255, 192, 229)",
-      "bgImage": "./images/44.png",
+      "bgImage": "/images/home_img/44.png",
       "title": "省钱卡券",
       "subtitle": "吃喝玩乐放心购",
-      "titleIcon": "./font/jiantou.png",
-      "illustration": "./images/4.png",
-      "hoverImage": "./images/4-4.png",
+      "titleIcon": "/images/home_ui/jiantou.png",
+      "illustration": "/images/home_img/4.png",
+      "hoverImage": "/images/home_img/4-4.png",
       "goods": [
         {
           "href": "#",
-          "img": "https://img.alicdn.com/bao/uploaded/i1/O1CN01aED4vc1i8b4SIrz12_!!4611686018427387152-53-fleamarket.heic_170x10000Q90.jpg_.webp",
+          "img": "/images/home_img/coupon-good1.png",
           "alt": "图一",
           "currency": "¥",
           "price": "6.05"
         },
         {
           "href": "#",
-          "img": "https://img.alicdn.com/bao/uploaded/i4/O1CN01PqkURY286TEMtNMme_!!4611686018427382955-0-fleamarket.jpg_170x10000Q90.jpg_.webp",
+          "img": "/images/home_img/coupon-good2.png",
           "alt": "图二",
           "currency": "¥",
           "price": "19.90"
         },
         {
           "href": "#",
-          "img": "https://img.alicdn.com/bao/uploaded/i2/O1CN01I9WAhK1mNwlRwb1tv_!!4611686018427385871-53-fleamarket.heic_170x10000Q90.jpg_.webp",
+          "img": "/images/home_img/coupon-good3.png",
           "alt": "图三",
           "currency": "¥",
           "price": "19.90"
@@ -1534,7 +1534,7 @@
       {
         "id": "guess",
         "label": "猜你喜欢",
-        "icon": "./font/mylove.png"
+        "icon": "/images/home_ui/mylove.png"
       },
       {
         "id": "private",
@@ -1630,12 +1630,12 @@
     "icp": {
       "records": [
         {
-          "icon": "./font/guohui1.png",
+          "icon": "/images/home_ui/guohui1.png",
           "label": "鄂ICP备2025147217号-1",
           "href": "#"
         },
         {
-          "icon": "./font/guohui2.png",
+          "icon": "/images/home_ui/guohui2.png",
           "label": "电子营业执照",
           "href": "#"
         }
@@ -1645,12 +1645,12 @@
     "reportArea": {
       "images": [
         {
-          "src": "./images/jubao1.png",
+          "src": "/images/home_img/jubao1.png",
           "alt": "网上有害信息举报专区",
           "width": 187.2
         },
         {
-          "src": "./images/jubao2.png",
+          "src": "/images/home_img/jubao2.png",
           "alt": "网络举报APP下载"
         }
       ],
@@ -1663,42 +1663,167 @@
       }
     }
   },
-  "toolbar": {
-    "items": [
-      {
-        "id": "post",
-        "iconClass": "icon-1",
-        "label": "发闲置"
+    "toolbar": {
+      "items": [
+        {
+          "id": "post",
+          "iconClass": "icon-1",
+          "label": "发闲置"
+        },
+        {
+          "id": "message",
+          "iconClass": "icon-2",
+          "label": "消息",
+          "badge": 3
+        },
+        {
+          "id": "xianyuAccount",
+          "iconClass": "icon-3",
+          "label": "闲鱼号",
+          "onlyOn": "myself",
+          "popover": {
+            "class": "app-qrcode-inner",
+            "img": {
+              "class": "app-qrcode-img",
+              "src": "/images/app-id.png",
+              "alt": "APP扫码查看"
+            },
+            "title": "APP扫码查看"
+          }
+        },
+        {
+          "id": "app",
+          "iconClass": "icon-4",
+          "label": "APP",
+          "popover": {
+            "class": "app-qrcode-inner",
+            "img": {
+              "class": "app-qrcode-img",
+              "src": "/images/app.png",
+              "alt": "扫码下载APP"
+            },
+            "title": "扫码下载APP"
+          }
+        },
+        {
+          "id": "feedback",
+          "iconClass": "icon-5",
+          "label": "反馈"
+        },
+        {
+          "id": "service",
+          "iconClass": "icon-6",
+          "label": "客服"
+        },
+        {
+          "id": "backToTop",
+          "iconClass": "icon-7",
+          "label": "回顶部"
+        }
+      ],
+      "backToTopConfig": {
+        "scrollTopToShow": 1000
+      }
+    },
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+  "myself": {
+    "profile": {
+      "avatar": "/images/home_ui/myself.png",
+      "nickname": "初南寄瑶",
+      "levelTag": [
+      "/images/myself_ui/credit-1.png",
+      "/images/myself_ui/credit-2.png"
+      ],
+      "location": "辽宁省",
+      "fans": 15,
+      "follows": 2,
+      "desc": "要赠礼的记得提前或当天问我，12:00–24:00 在线～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～",
+      "btn": "编辑资料",
+      "bg": "/images/myself/profile-bg.png"
+    },
+    "menu": [
+      { 
+        "label": "我的闲鱼",
+        "icon": "/images/myself_ui/menu-home.png",
+        "href": "/myself",
+        "active": true 
       },
+    
       {
-        "id": "message",
-        "iconClass": "icon-2",
-        "label": "消息",
-        "badge": 3
+        "label": "我的交易",
+        "icon": "/images/myself_ui/menu-order.png",
+        "href": "#",
+        "expanded": true,
+        "children": [
+          { "label": "我发布的", "href": "#" },
+          { "label": "我卖出的", "href": "#" },
+          { "label": "我买到的", "href": "#" }
+        ]
       },
-      {
-        "id": "app",
-        "iconClass": "icon-3",
-        "label": "APP"
+    
+      { 
+        "label": "我的收藏",
+        "icon": "/images/myself_ui/menu-love.png",
+        "href": "#"
       },
+    
       {
-        "id": "feedback",
-        "iconClass": "icon-4",
-        "label": "反馈"
-      },
-      {
-        "id": "service",
-        "iconClass": "icon-5",
-        "label": "客服"
-      },
-      {
-        "id": "backToTop",
-        "iconClass": "icon-6",
-        "label": "回顶部"
+        "label": "账户设置",
+        "icon": "/images/myself_ui/menu-setting.png",
+        "href": "#",
+        "expanded": true,
+        "children": [
+          { "label": "个人资料", "href": "#" },
+          { "label": "账号与安全", "href": "#" }
+        ]
       }
     ],
-    "backToTopConfig": {
-      "scrollTopToShow": 1000
-    }
+    "tabs": {
+      "goodsLabel": "宝贝",
+      "goodsCount": 108,
+      "creditLabel": "信用及评价",
+      "creditCount": 160
+    },
+    "goods": [
+      {
+        "img": "https://picsum.photos/seed/good-1/260/260",
+        "title": "光遇带跑图，或者代跑 邮寄服务",
+        "currency": "¥",
+        "price": 5,
+        "unit": "/小时"
+      },
+      {
+        "img": "https://picsum.photos/seed/good-2/260/260",
+        "title": "口腔清新喷雾 20ml 几乎全新",
+        "currency": "¥",
+        "price": 20
+      },
+      {
+        "img": "https://picsum.photos/seed/good-3/260/260",
+        "title": "房间遮光窗帘一对，自取自提",
+        "currency": "¥",
+        "price": 40
+      },
+      {
+        "img": "https://picsum.photos/seed/good-4/260/260",
+        "title": "光遇代肝季蜡 / 心火，长期接单",
+        "currency": "¥",
+        "price": 13.14
+      }
+    ]
   }
 }
