@@ -1,21 +1,101 @@
+// ===== 统一：项目根路径 & URL 解析（支持本地 file:// 直接打开，也支持服务器路径） =====
+const PROJECT_ROOT = (() => {
+  const scriptEl =
+    document.currentScript ||
+    document.querySelector('script[src*="script.js"]') ||
+    document.querySelector('script[src]');
+  const scriptUrl = scriptEl ? new URL(scriptEl.getAttribute('src'), document.baseURI) : new URL(document.baseURI);
+
+  const jsDir = new URL('./', scriptUrl);   // .../js/
+  return new URL('../', jsDir);             // 项目根目录 .../
+})();
+
+const LOCAL_API = 'http://localhost:53000';
+
+function getBaseURL() {
+  if (window.location.protocol === 'file:') return LOCAL_API;
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return LOCAL_API;
+  // 如果你服务器做了 /api 反代，改成 return '/api';
+  return LOCAL_API;
+}
+
+function resolveAsset(url) {
+  if (!url || typeof url !== 'string') return url;
+
+  // http / https / data: 直接放行
+  if (/^(https?:)?\/\//.test(url) || url.startsWith('data:')) {
+    return url;
+  }
+
+  // 统一把各种写法都归一成：images/xxx（不带开头的 ./ 或 /）
+  // 只处理 images 目录下的资源（避免误伤其它相对路径）
+  const normalizeToImagesPath = (u) => {
+    if (u.startsWith('./images/')) return u.slice(2);   // "./images/xx" -> "images/xx"
+    if (u.startsWith('/images/'))  return u.slice(1);   // "/images/xx"  -> "images/xx"
+    if (u.startsWith('images/'))   return u;            // "images/xx"   -> "images/xx"
+    return null;
+  };
+
+  const imagesPath = normalizeToImagesPath(url);
+  if (!imagesPath) return url;
+
+  const path = (window.location.pathname || '').replace(/\\/g, '/');
+
+  // ===== 按页面层级补 ../ =====
+  // index.html              -> ./images/xxx
+  // myself/index.html       -> ../images/xxx
+  // myself/buy/index.html   -> ../../images/xxx
+  //
+  // 注意：这里主要解决你本地 file:// 直接打开的情况
+  if (window.location.protocol === 'file:') {
+    if (/\/myself\/buy\/index\.html$/i.test(path)) {
+      return '../../' + imagesPath; // ../../images/xxx
+    }
+    if (/\/myself\/index\.html$/i.test(path)) {
+      return '../' + imagesPath;    // ../images/xxx
+    }
+    return './' + imagesPath;       // ./images/xxx
+  }
+
+  // 服务器环境：保持原样（/images/... 交给服务器；./images/... 也能正常用）
+  // 如果你希望服务器环境也统一成相对路径，可以把这里也改成 return './' + imagesPath;
+  return url;
+}
+
+function resolvePageHref(href) {
+  if (!href || typeof href !== 'string') return href;
+  if (/^(https?:)?\/\//.test(href) || href.startsWith('data:') || href.startsWith('#')) return href;
+
+  const map = {
+    '/myself': 'myself/index.html',
+    '/myself/buy': 'myself/buy/index.html'
+  };
+
+  if (window.location.protocol === 'file:' && map[href]) {
+    return new URL(map[href], PROJECT_ROOT).href;
+  }
+  return href;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const path = window.location.pathname || '';
 
-  // 只要路径里带 /myself，就认为是“我的”页面（含 /myself/buy）
-  const isMyPage = path.includes('/myself');
+  const isMyPage =
+    path.includes('/myself') ||
+    /\/myself\/index\.html$/i.test(path) ||
+    /\/myself_buy\/index\.html$/i.test(path) ||
+    !!document.querySelector('.my-wrapper') ||
+    !!document.querySelector('.my-page');
 
-  if (isMyPage) {
-    initMyPage();
-  } else {
-    initPage();   // 原来的首页初始化
-  }
+  if (isMyPage) initMyPage();
+  else initPage();
 });
 
 
     async function initPage() {
       try {
           
-        const baseURL = '/api';
+        const baseURL = getBaseURL();
 
         const [
           meta,
@@ -62,11 +142,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // =============== 我的页面：从 json-server 读取数据 ===============
     async function initMyPage() {
       try {
-        const baseURL = '/api';
+        const baseURL = getBaseURL();
     
         // ★ 根据路径决定拉取哪个接口、渲染哪个页面
         const path = window.location.pathname || '';
-        const isBuyPage = path.includes('/myself/buy');
+        const isBuyPage =
+          path.includes('/myself/buy') ||
+          /\/myself\/buy\/index\.html$/i.test(path) ||   // file:// 下常见
+          /\/buy\/index\.html$/i.test(path) ||           // 兜底
+          !!document.querySelector('.order-card, .order-tab-btn'); // 兜底：页面结构命中
         const myselfEndpoint = isBuyPage ? '/myself_buy' : '/myself';
     
         const [
@@ -119,12 +203,12 @@ document.addEventListener('DOMContentLoaded', () => {
           link.type = 'image/png';
           document.head.appendChild(link);
         }
-        link.href = meta.favicon;
+        link.href = resolveAsset(meta.favicon);
       }
     }
 
     function renderHeader(header) {
-      const topBarMain = document.querySelector('.top-bar-main');
+      const topBarMain = document.querySelector('.top-barlyl-main');
       if (!topBarMain || !header) return;
       topBarMain.innerHTML = '';
 
@@ -132,10 +216,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (header.logo) {
         const logoLink = document.createElement('a');
         logoLink.className = 'logo';
-        logoLink.href = header.logo.link || '#';
+        logoLink.href = resolvePageHref(header.logo.link || '#');
 
         const logoImg = document.createElement('img');
-        logoImg.src = header.logo.img || '';
+        logoImg.src = resolveAsset(header.logo.img || '');
         if (header.logo.width)  logoImg.style.width  = header.logo.width + 'px';
         if (header.logo.height) logoImg.style.height = header.logo.height + 'px';
         logoImg.alt = header.logo.alt || '';
@@ -155,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="search-box">
           <input placeholder="${search.placeholder || ''}" />
           <button>
-            <img src="${search.buttonIcon || '/images/home_ui/search.png'}"
+            <img src="${resolveAsset(search.buttonIcon || './images/home_ui/search.png')}"
                  alt="Search Icon"
                  style="width:16px;height:16px;margin-right:2px;" />
             <span>${search.buttonText || '搜索'}</span>
@@ -180,10 +264,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (Array.isArray(header.userMenu)) {
         header.userMenu.forEach((item, idx) => {
           const a = document.createElement('a');
-          a.href = item.href || '#';
+          a.href = resolvePageHref(item.href || '#');
 
           const img = document.createElement('img');
-          img.src = item.icon || '';
+          img.src = resolveAsset(item.icon || '');
           img.alt = item.label || '';
           img.className = 'icon';
           img.style.width = '24px';
@@ -221,7 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
         a.dataset.target = cat.id;
 
         const img = document.createElement('img');
-        img.src = cat.icon || '';
+        img.src = resolveAsset(cat.icon || '');
         img.alt = 'icon';
         a.appendChild(img);
 
@@ -288,7 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
       banner.href = cfg.href || '#';
 
       const img = document.createElement('img');
-      img.src = cfg.src || '';
+      img.src = resolveAsset(cfg.src || '');
       img.alt = cfg.alt || '';
 
       if (cfg.width)  img.style.width  = cfg.width + 'px';
@@ -361,7 +445,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (card.bgImage) {
           const bg = document.createElement('img');
           bg.className = 'card-bad';
-          bg.src = card.bgImage;
+          bg.src   = resolveAsset(card.bgImage);
           head.appendChild(bg);
         }
 
@@ -372,7 +456,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const arrow = document.createElement('img');
         // 标题右边的小箭头：优先用 data.json 的 titleIcon，没有就用默认
-        arrow.src = card.titleIcon || '/images/home_ui/jiantou.png';
+        arrow.src = resolveAsset(card.titleIcon || './images/home_ui/jiantou.png');
         arrow.style.width = '14px';
         arrow.style.height = '14px';
         arrow.style.marginTop = '3px';
@@ -390,7 +474,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (card.illustration) {
           const illu = document.createElement('img');
           illu.className = 'card-illu';
-          illu.src = card.illustration;
+          illu.src = resolveAsset(card.illustration);
           head.appendChild(illu);
         }
 
@@ -398,7 +482,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (card.hoverImage) {
           const hover = document.createElement('img');
           hover.className = 'hover-spin';
-          hover.src = card.hoverImage;
+          hover.src= resolveAsset(card.hoverImage);
           head.appendChild(hover);
         }
 
@@ -414,7 +498,7 @@ document.addEventListener('DOMContentLoaded', () => {
             a.href = g.href || '#';
 
             const img = document.createElement('img');
-            img.src = g.img || '';
+            img.src  = resolveAsset(g.img || '');
             img.alt = g.alt || '';
             a.appendChild(img);
 
@@ -460,7 +544,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (tab.icon) {
           const icon = document.createElement('img');
-          icon.src = tab.icon;
+          icon.src = resolveAsset(tab.icon);
           icon.alt = tab.label || '';
           icon.style.width = '20px';
           icon.style.height = '20px';
@@ -514,10 +598,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 主图
         const seed = `${imgFeed}-${page}-${idx}`;
-        node.querySelector('img').src = `/images/picsum/${imgFeed}/${seed}.jpg`;
+        node.querySelector('img').src = resolveAsset(`/images/picsum/${imgFeed}/${seed}.jpg`);
         /*
         const seed = `${feedName}-${page}-${idx}`;
-        node.querySelector('img').src = `/images/picsum/${feedName}/${seed}.jpg`;
+        node.querySelector('img').src = resolveAsset(`/images/picsum/${feedName}/${seed}.jpg`);
         */
 
         const titlePool = [
@@ -539,13 +623,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const titleEl = node.querySelector('.feed-title');
         titleEl.innerHTML = '';
         const iconPool = [
-          '/images/home_ui/baoyou.png',
+          './images/home_ui/baoyou.png',
           '' // 不显示
         ];
         const iconUrl = pick(iconPool);
         if (iconUrl) {
           const iconImg = document.createElement('img');
-          iconImg.src = iconUrl;
+          iconImg.src = resolveAsset(iconUrl);
           iconImg.className = 'title-icon';
           titleEl.appendChild(iconImg);
         }
@@ -555,16 +639,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const attrEl = node.querySelector('.feed-attr');
         attrEl.innerHTML = '';
         const attrIcons = [
-          { src: '/images/home_ui/recent.png',    width: 85.95, height: 19 },
-          { src: '/images/home_ui/bao.png',       width: 45.6,  height: 16.8 },
-          { src: '/images/home_ui/baoyoutui.png', width: 91.2,  height: 16.8 },
+          { src: './images/home_ui/recent.png',    width: 85.95, height: 19 },
+          { src: './images/home_ui/bao.png',       width: 45.6,  height: 16.8 },
+          { src: './images/home_ui/baoyoutui.png', width: 91.2,  height: 16.8 },
           { src: '',                     width: 45,    height: 18 } // 空占位
         ];
         const pickAttrIcon = () => attrIcons[Math.floor(Math.random() * attrIcons.length)];
         const chosen = pickAttrIcon();
         if (chosen.src) {
           const img = document.createElement('img');
-          img.src = chosen.src;
+          img.src = resolveAsset(chosen.src);
           img.style.cssText =
             'width:' + chosen.width + 'px;' +
             'height:' + chosen.height + 'px;' +
@@ -604,12 +688,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // 用户信息
         node.querySelector('.user-name').textContent = pick(names);
         const avSeed = `avatar-${imgFeed}-${page}-${idx}`;
-        node.querySelector('.user-avatar').src =
-          `/images/picsum/avatar/${imgFeed}/${avSeed}.jpg`;
+        node.querySelector('.user-avatar').src = resolveAsset(`/images/picsum/avatar/${imgFeed}/${avSeed}.jpg`);
         /*
         const avSeed = `avatar-${feedName}-${page}-${idx}`;
-        node.querySelector('.user-avatar').src =
-          `/images/picsum/avatar/${feedName}/${avSeed}.jpg`;
+        node.querySelector('.user-avatar').src = resolveAsset(`/images/picsum/avatar/${feedName}/${avSeed}.jpg`);
         */
 
         const tagEl = node.querySelector('.user-tag');
@@ -815,7 +897,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const a = document.createElement('a');
             a.href = rec.href || '#';
             const img = document.createElement('img');
-            img.src = rec.icon || '';
+            img.src = resolveAsset(rec.icon || '');
             img.alt = '';
             a.appendChild(img);
             a.appendChild(document.createTextNode(rec.label || ''));
@@ -850,7 +932,7 @@ document.addEventListener('DOMContentLoaded', () => {
         imgDiv.className = 'footer-images';
         (footer.reportArea.images || []).forEach(imgCfg => {
           const img = document.createElement('img');
-          img.src = imgCfg.src || '';
+          img.src = resolveAsset(imgCfg.src || '');
           img.alt = imgCfg.alt || '';
           if (imgCfg.width) {
             img.style.width = imgCfg.width + 'px';
@@ -951,7 +1033,7 @@ document.addEventListener('DOMContentLoaded', () => {
           div.dataset.qrTitle = item.popover.title || '';
     
           if (item.popover.img) {
-            div.dataset.qrImg      = item.popover.img.src  || '';
+            div.dataset.qrImg      = resolveAsset(item.popover.img.src || '');
             div.dataset.qrImgAlt   = item.popover.img.alt  || '';
             div.dataset.qrImgClass = item.popover.img.class || 'app-qrcode-img';
           }
@@ -1117,7 +1199,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const editBtnEl  = document.querySelector('.my-edit-btn');
     
       if (avatarEl && profile.avatar) {
-        avatarEl.src = profile.avatar;
+        avatarEl.src = resolveAsset(profile.avatar);
       }
       if (nickEl) {
         nickEl.textContent = profile.nickname || '';
@@ -1134,7 +1216,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!src) return;
             const img = document.createElement('img');
             img.className = 'my-credit-img';
-            img.src = src;
+            img.src = resolveAsset(src);
             img.alt = '';
             img.style.objectFit = 'fill';   // 和你截图里的 style 一致
             levelTagEl.appendChild(img);
@@ -1257,7 +1339,7 @@ document.addEventListener('DOMContentLoaded', () => {
           card.className = 'my-good-card';
       
           const img = document.createElement('img');
-          img.src = item.img || '';
+          img.src = resolveAsset(item.img || '');
           img.alt = item.title || '';
           card.appendChild(img);
       
@@ -1272,7 +1354,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (item.titleIcon) {
             const icon = document.createElement('img');
             icon.className = 'my-title-icon';
-            icon.src = item.titleIcon;
+            icon.src = resolveAsset(item.titleIcon);
             icon.alt = '';
             title.appendChild(icon);
           }
@@ -1284,7 +1366,7 @@ document.addEventListener('DOMContentLoaded', () => {
           attr.className = 'my-good-attr';
           if (item.attrIcon) {
             const aimg = document.createElement('img');
-            aimg.src = item.attrIcon;
+            aimg.src = resolveAsset(item.attrIcon);
             aimg.alt = '';
             aimg.className = 'my-attr-icon';
             attr.appendChild(aimg);
@@ -1341,7 +1423,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
           const uav = document.createElement('img');
           uav.className = 'my-user-avatar';
-          uav.src = item.userAvatar || (document.querySelector('.my-avatar')?.src || '');
+          uav.src = resolveAsset(item.userAvatar || '') || (document.querySelector('.my-avatar')?.src || '');
           uav.alt = '';
           userInfo.appendChild(uav);
       
@@ -1431,7 +1513,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
           const av = document.createElement('img');
           av.className = 'order-seller-avatar';
-          av.src = o.sellerAvatar || '/images/home_ui/myself.png';
+          av.src = resolveAsset(o.sellerAvatar || './images/home_ui/myself.png');
           av.alt = '';
     
           const name = document.createElement('div');
@@ -1455,7 +1537,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
           const img = document.createElement('img');
           img.className = 'order-thumb';
-          img.src = o.productImg || '';
+          img.src = resolveAsset(o.productImg || '');
           img.alt = '';
           body.appendChild(img);
     
@@ -1592,7 +1674,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
         // 顶级 a
         const a = document.createElement('a');
-        a.href = item.href || 'javascript:void(0)';
+        a.href = resolvePageHref(item.href || 'javascript:void(0)');
         a.className = 'my-nav-link';
         if (hasChildren) a.classList.add('my-nav-link--parent');
         li.appendChild(a);
@@ -1604,7 +1686,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (item.icon) {
           const img = document.createElement('img');
           img.className = 'my-nav-icon';
-          img.src = item.icon;
+          img.src = resolveAsset(item.icon);
           img.alt = item.label || '';
           leftBox.appendChild(img);
         }
@@ -1633,7 +1715,7 @@ document.addEventListener('DOMContentLoaded', () => {
             subUl.appendChild(subLi);
     
             const subA = document.createElement('a');
-            subA.href = child.href || '#';
+            subA.href = resolvePageHref(child.href || '#');
             subA.textContent = child.label || '';
     
             // ⭐ 子菜单命中当前 URL：高亮“我买到的”
@@ -1761,6 +1843,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function formatAllPrices() {
       // 你的项目里会出现价格的三种 class：feed / 我的宝贝 / 订单
       document
-        .querySelectorAll('.feed-price, .my-good-price, .order-price')
+        .querySelectorAll('.feed-price, .order-price')
         .forEach(formatPrice);
     }
