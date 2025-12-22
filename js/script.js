@@ -893,7 +893,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
       // ★ 根据当前路径判断是不是“我的”页面
       const path = window.location.pathname || '';
+
       const isMyPage = path.includes('/myself');
+      const isBuyPage =
+        path.includes('/myself/buy') ||
+        /\/myself\/buy\/index\.html$/i.test(path);
     
       // ★ 先按 onlyOn 过滤 item：
       //   - onlyOn: "myself" 只在 myself 页面显示
@@ -901,6 +905,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const items = toolbar.items.filter(item => {
         if (item.onlyOn === 'myself' && !isMyPage) return false;
         if (item.onlyOn === 'home' &&  isMyPage) return false;
+        if (isBuyPage && item.id === 'xianyuAccount') return false;
         return true;
       });
     
@@ -1761,6 +1766,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function formatAllPrices() {
       // 你的项目里会出现价格的三种 class：feed / 我的宝贝 / 订单
       document
-        .querySelectorAll('.feed-price, .my-good-price, .order-price')
+        .querySelectorAll('.feed-price, .order-price')
         .forEach(formatPrice);
     }
