@@ -69,28 +69,28 @@ It is built with **pure HTML, CSS, and JavaScript**, without any frontend framew
 │   ├── myself.css          # “我的”页面样式
 │   └── myself_buy.css      # “我买到的”页面样式
 └── images / fonts / icons  # 图片、字体等静态资源
-🌱 分支说明 Branch Strategy （重要）
+
+---
+
+
+## 🌱 分支说明 Branch Strategy （重要）
 本项目使用 两个分支 来区分本地开发环境与服务器部署环境：
 
-🔹 main（服务器端分支）
-用于服务器部署
+### main（服务器端分支）
+-用于服务器部署
 
-script.js 中接口地址为：
+-script.js 中接口地址为：
 
-js
-复制代码
-const baseURL = '/api';
-接口地址由服务器域名决定
+-const baseURL = '/api';
+-接口地址由服务器域名决定
 
-🔹 localhost（本地开发分支）
-用于本地开发与调试
+### localhost（本地开发分支）
+-用于本地开发与调试
 
-script.js 中接口地址为：
+-script.js 中接口地址为：
 
-js
-复制代码
-const baseURL = 'http://localhost:53000/api';
-通过 json-server 在本地模拟接口
+-const baseURL = 'http://localhost:53000/api';
+-通过 json-server 在本地模拟接口
 
 ✅ localhost = 本地开发
 ✅ main = 服务器部署
