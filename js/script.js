@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const path = window.location.pathname || '';
 
-  // 只要路径里带 my.html，就认为是“我的”页面
+  // 只要路径里带 /myself，就认为是“我的”页面（含 /myself/buy）
   const isMyPage = path.includes('/myself');
 
   if (isMyPage) {
@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initFeeds(feeds);
         initBackToTop(toolbar && toolbar.backToTopConfig);
         initAppQrHover(); // APP 悬浮二维码
+        formatAllPrices(); 
       } catch (e) {
         console.error('从 json-server 加载数据失败：', e);
       }
@@ -63,6 +64,11 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const baseURL = '/api';
     
+        // ★ 根据路径决定拉取哪个接口、渲染哪个页面
+        const path = window.location.pathname || '';
+        const isBuyPage = path.includes('/myself/buy');
+        const myselfEndpoint = isBuyPage ? '/myself_buy' : '/myself';
+    
         const [
           meta,
           header,
@@ -74,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
           fetch(baseURL + '/header').then(r => r.json()),
           fetch(baseURL + '/footer').then(r => r.json()),
           fetch(baseURL + '/toolbar').then(r => r.json()),
-          fetch(baseURL + '/myself').then(r => r.json())
+          fetch(baseURL + myselfEndpoint).then(r => r.json())
         ]);
     
         renderMeta(meta);
@@ -82,8 +88,14 @@ document.addEventListener('DOMContentLoaded', () => {
         renderFooter(footer);
         renderToolbar(toolbar);
     
-        renderMyself(myselfData);
+        if (isBuyPage) {
+          renderMyBuy(myselfData);
+        } else {
+          renderMyself(myselfData);
+        }
     
+        formatAllPrices();
+        
         initBackToTop(toolbar && toolbar.backToTopConfig);
         initAppQrHover();
       } catch (e) {
@@ -497,11 +509,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
       function makeCard(idx, feedName) {
         const node = tpl.content.firstElementChild.cloneNode(true);
+        
+        const imgFeed = 'guess'; // ⭐ 所有 tab 都用 guess 图片
 
         // 主图
-        const imgUrl = 'https://picsum.photos/seed/' +
-          encodeURIComponent(feedName + '-' + page + '-' + idx) + '/400/400';
-        node.querySelector('img').src = imgUrl;
+        const seed = `${imgFeed}-${page}-${idx}`;
+        node.querySelector('img').src = `/images/picsum/${imgFeed}/${seed}.jpg`;
+        /*
+        const seed = `${feedName}-${page}-${idx}`;
+        node.querySelector('img').src = `/images/picsum/${feedName}/${seed}.jpg`;
+        */
 
         const titlePool = [
           '跨巫师帽礼包代送（直拍当送钱）',
@@ -576,7 +593,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const del = document.createElement('del');
           del.textContent = '¥' + oldPrice;
           del.style.color = '#999';
-          del.style.fontSize = '12px';
+          del.style.fontSize = '14.4px';
           del.style.marginLeft = '4px';
           wishEl.appendChild(del);
         } else {
@@ -586,9 +603,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 用户信息
         node.querySelector('.user-name').textContent = pick(names);
+        const avSeed = `avatar-${imgFeed}-${page}-${idx}`;
         node.querySelector('.user-avatar').src =
-          'https://picsum.photos/seed/avatar-' +
-          encodeURIComponent(feedName + '-' + page + '-' + idx) + '/80/80';
+          `/images/picsum/avatar/${imgFeed}/${avSeed}.jpg`;
+        /*
+        const avSeed = `avatar-${feedName}-${page}-${idx}`;
+        node.querySelector('.user-avatar').src =
+          `/images/picsum/avatar/${feedName}/${avSeed}.jpg`;
+        */
 
         const tagEl = node.querySelector('.user-tag');
         const creditStates = [
@@ -1176,17 +1198,51 @@ document.addEventListener('DOMContentLoaded', () => {
       const tabsHeader = document.querySelector('.my-tabs-header');
       if (tabsHeader) {
         tabsHeader.innerHTML = '';
-    
-        const goodsBtn = document.createElement('button');
-        goodsBtn.className = 'my-tab-btn my-tab-active';
-        goodsBtn.textContent =
-          (tabs.goodsLabel || '宝贝') + ' ' + (tabs.goodsCount != null ? tabs.goodsCount : '');
-    
-        const creditBtn = document.createElement('button');
-        creditBtn.className = 'my-tab-btn';
-        creditBtn.textContent =
-          (tabs.creditLabel || '信用及评价') + ' ' + (tabs.creditCount != null ? tabs.creditCount : '');
-    
+      
+        function makeTabBtn({ label, count, active }) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'my-tab-btn' + (active ? ' my-tab-active' : '');
+      
+          const wrap = document.createElement('span');
+          wrap.className = 'my-tab-label';
+      
+          const text = document.createElement('span');
+          text.className = 'my-tab-text';
+          text.textContent = label || '';
+      
+          const num = document.createElement('span');
+          num.className = 'my-tab-count';
+          // count 允许为 0，所以用 != null 判断
+          num.textContent = (count != null ? String(count) : '');
+      
+          wrap.appendChild(text);
+          wrap.appendChild(num);
+          btn.appendChild(wrap);
+      
+          return btn;
+        }
+      
+        const goodsBtn = makeTabBtn({
+          label: tabs.goodsLabel || '宝贝',
+          count: tabs.goodsCount,
+          active: true
+        });
+      
+        const creditBtn = makeTabBtn({
+          label: tabs.creditLabel || '信用及评价',
+          count: tabs.creditCount,
+          active: false
+        });
+      
+        // （可选）点击切换下划线高亮
+        const setActive = (target) => {
+          [goodsBtn, creditBtn].forEach(b => b.classList.remove('my-tab-active'));
+          target.classList.add('my-tab-active');
+        };
+        goodsBtn.addEventListener('click', () => setActive(goodsBtn));
+        creditBtn.addEventListener('click', () => setActive(creditBtn));
+      
         tabsHeader.appendChild(goodsBtn);
         tabsHeader.appendChild(creditBtn);
       }
@@ -1195,46 +1251,317 @@ document.addEventListener('DOMContentLoaded', () => {
       const goodsGrid = document.querySelector('.my-goods-grid');
       if (goodsGrid) {
         goodsGrid.innerHTML = '';
-    
+      
         goods.forEach(item => {
           const card = document.createElement('article');
           card.className = 'my-good-card';
-    
+      
           const img = document.createElement('img');
           img.src = item.img || '';
           img.alt = item.title || '';
           card.appendChild(img);
-    
-          const title = document.createElement('h3');
+      
+          // info 容器（对齐你图二/图三的 .feed-info）
+          const info = document.createElement('div');
+          info.className = 'my-good-info';
+      
+          // 1) 标题（支持左侧小图标：item.titleIcon）
+          const title = document.createElement('div');
           title.className = 'my-good-title';
-          title.textContent = item.title || '';
-          card.appendChild(title);
-    
-          const priceRow = document.createElement('div');
-          priceRow.className = 'my-good-price-row';
-    
+      
+          if (item.titleIcon) {
+            const icon = document.createElement('img');
+            icon.className = 'my-title-icon';
+            icon.src = item.titleIcon;
+            icon.alt = '';
+            title.appendChild(icon);
+          }
+          title.appendChild(document.createTextNode(item.title || ''));
+          info.appendChild(title);
+      
+          // 2) 属性行（支持一张小图：item.attrIcon）
+          const attr = document.createElement('div');
+          attr.className = 'my-good-attr';
+          if (item.attrIcon) {
+            const aimg = document.createElement('img');
+            aimg.src = item.attrIcon;
+            aimg.alt = '';
+            aimg.className = 'my-attr-icon';
+            attr.appendChild(aimg);
+          } else {
+            // 没配图就留一个占位（保持高度一致，视觉更像闲鱼）
+            const placeholder = document.createElement('span');
+            placeholder.className = 'my-attr-placeholder';
+            attr.appendChild(placeholder);
+          }
+          info.appendChild(attr);
+      
+          // 3) 价格行（¥ + 价格 + 划线价/想要）
+          const bottom = document.createElement('div');
+          bottom.className = 'my-good-bottom';
+      
           const symbol = document.createElement('span');
           symbol.className = 'my-good-price-symbol';
           symbol.textContent = item.currency || '¥';
-          priceRow.appendChild(symbol);
-    
+          bottom.appendChild(symbol);
+      
           const price = document.createElement('span');
           price.className = 'my-good-price';
-          price.textContent =
-            item.price != null ? item.price : '';
-          priceRow.appendChild(price);
-    
-          if (item.unit) {
+          price.textContent = (item.price != null ? item.price : '');
+          bottom.appendChild(price);
+      
+          const right = document.createElement('div');
+          right.className = 'my-good-wish';
+      
+          // 优先显示 oldPrice（划线价），否则显示 wish（xx人想要 / 文案）
+          if (item.oldPrice != null && item.oldPrice !== '') {
+            const del = document.createElement('del');
+            del.className = 'my-old-price';
+            del.textContent = '¥' + item.oldPrice;
+            right.appendChild(del);
+          } else if (item.wish) {
+            right.textContent = item.wish;
+          } else if (item.unit) {
+            // 兼容你原来的 unit（比如 /小时）
             const unit = document.createElement('span');
             unit.className = 'my-good-price-unit';
             unit.textContent = item.unit;
-            priceRow.appendChild(unit);
+            right.appendChild(unit);
           }
-    
-          card.appendChild(priceRow);
+          bottom.appendChild(right);
+      
+          info.appendChild(bottom);
+      
+          // 4) 用户行（可选：这里默认显示你的昵称；也支持 item.userName / item.userAvatar）
+          const user = document.createElement('div');
+          user.className = 'my-good-user';
+      
+          const userInfo = document.createElement('div');
+          userInfo.className = 'my-user-info';
+      
+          const uav = document.createElement('img');
+          uav.className = 'my-user-avatar';
+          uav.src = item.userAvatar || (document.querySelector('.my-avatar')?.src || '');
+          uav.alt = '';
+          userInfo.appendChild(uav);
+      
+          const uname = document.createElement('div');
+          uname.className = 'my-user-name';
+          uname.textContent = item.userName || (profile.nickname || '');
+          userInfo.appendChild(uname);
+      
+          user.appendChild(userInfo);
+          info.appendChild(user);
+      
+          card.appendChild(info);
           goodsGrid.appendChild(card);
         });
       }
+    }
+
+    /* =============== 我的买到的：订单页渲染 =============== */
+    function renderMyBuy(data) {
+      if (!data) return;
+    
+      // 左侧菜单
+      if (data.menu) {
+        renderMyMenu(data.menu);
+      }
+    
+      const tabs = Array.isArray(data.orderTabs) ? data.orderTabs : [];
+      const orders = Array.isArray(data.orders) ? data.orders : [];
+    
+      const tabsHeader = document.querySelector('.my-tabs-header');
+      const listWrap = document.querySelector('.my-goods-grid');
+      if (!tabsHeader || !listWrap) return;
+    
+      // 1) tabs
+      tabsHeader.innerHTML = '';
+      let activeId = (tabs.find(t => t.active)?.id) || (tabs[0]?.id) || 'all';
+    
+      function renderTabs() {
+        // 1) 渲染 tabs（只执行一次）
+        tabsHeader.innerHTML = '';
+        
+        tabs.forEach(t => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'order-tab-btn';
+          btn.dataset.id = t.id;
+          btn.textContent = t.label || '';
+        
+          if (t.id === activeId) {
+            btn.classList.add('is-active');
+          }
+        
+          btn.addEventListener('click', () => {
+            // 切 activeId
+            activeId = t.id;
+        
+            // ⭐ 只切换 class，不重建 DOM
+            tabsHeader.querySelectorAll('.order-tab-btn').forEach(b => {
+              b.classList.toggle('is-active', b.dataset.id === activeId);
+            });
+        
+            renderOrders();
+          });
+        
+          tabsHeader.appendChild(btn);
+        });
+      }
+    
+      // 2) order list
+      function renderOrders() {
+        listWrap.innerHTML = '';
+    
+        const filtered = activeId === 'all'
+          ? orders
+          : orders.filter(o => String(o.status) === String(activeId));
+    
+        filtered.forEach(o => {
+          const card = document.createElement('article');
+          card.className = 'order-card';
+    
+          // header
+          const head = document.createElement('div');
+          head.className = 'order-head';
+    
+          const seller = document.createElement('div');
+          seller.className = 'order-seller';
+    
+          const av = document.createElement('img');
+          av.className = 'order-seller-avatar';
+          av.src = o.sellerAvatar || '/images/home_ui/myself.png';
+          av.alt = '';
+    
+          const name = document.createElement('div');
+          name.className = 'order-seller-name';
+          name.textContent = o.sellerName || '';
+    
+          seller.appendChild(av);
+          seller.appendChild(name);
+    
+          const status = document.createElement('div');
+          status.className = 'order-status';
+          status.textContent = o.statusText || '';
+    
+          head.appendChild(seller);
+          head.appendChild(status);
+          card.appendChild(head);
+    
+          // body
+          const body = document.createElement('div');
+          body.className = 'order-body';
+    
+          const img = document.createElement('img');
+          img.className = 'order-thumb';
+          img.src = o.productImg || '';
+          img.alt = '';
+          body.appendChild(img);
+    
+          const info = document.createElement('div');
+          info.className = 'order-info';
+    
+          const title = document.createElement('div');
+          title.className = 'order-title';
+          title.textContent = o.productTitle || '';
+          info.appendChild(title);
+    
+          const priceRow = document.createElement('div');
+          priceRow.className = 'order-price-row';
+    
+          const price = document.createElement('div');
+          price.className = 'order-price';
+          price.textContent = (o.currency || '¥') + (o.price != null ? o.price : '');
+          priceRow.appendChild(price);
+    
+          info.appendChild(priceRow);
+          body.appendChild(info);
+          card.appendChild(body);
+    
+          // footer
+          const foot = document.createElement('div');
+          foot.className = 'order-foot';
+    
+          const more = document.createElement('button');
+          more.type = 'button';
+          more.className = 'order-btn order-btn-ghost';
+          more.textContent = '更多';
+          foot.appendChild(more);
+    
+          const actions = document.createElement('div');
+          actions.className = 'order-actions';
+    
+          // 订单动作：如果 JSON 里没配 actions，就按 status 自动生成
+          let actionList;
+          
+          if (Array.isArray(o.actions) && o.actions.length) {
+            actionList = o.actions;
+          } else {
+            switch (String(o.status)) {
+              // ✅ 交易成功（待评价/已完成）
+              case 'unrated':
+                actionList = [
+                  { type: 'contact', label: '联系卖家' },
+                  { type: 'rebuy',   label: '再次购买' },
+                  { type: 'rate',    label: '去评价', primary: true }
+                ];
+                break;
+          
+              // ✅ 交易关闭
+              case 'closed':
+                actionList = [
+                  { type: 'contact', label: '联系卖家' },
+                  { type: 'delete',  label: '删除订单' },
+                  { type: 'rebuy',   label: '再次购买', primary: true }
+                ];
+                break;
+          
+              // ✅ 待收货：中间改为“查看物流”
+              case 'unreceived':
+                actionList = [
+                  { type: 'contact', label: '联系卖家' },
+                  { type: 'track',   label: '查看物流' },
+                  { type: 'confirm', label: '确认收货', primary: true }
+                ];
+                break;
+          
+              // ✅ 退款中：联系卖家 / 再次购买 / 查看进度
+              case 'refund':
+                actionList = [
+                  { type: 'contact',  label: '联系卖家' },
+                  { type: 'rebuy',    label: '再次购买' },
+                  { type: 'progress', label: '查看进度', primary: true }
+                ];
+                break;
+          
+              // 其他状态（可保持原默认）
+              default:
+                actionList = [
+                  { type: 'contact', label: '联系卖家' },
+                  { type: 'rebuy',   label: '再次购买' },
+                  { type: 'rate',    label: '去评价', primary: true }
+                ];
+            }
+          }
+    
+          actionList.forEach(a => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'order-btn' + (a.primary ? ' order-btn-primary' : '');
+            b.textContent = a.label || '';
+            actions.appendChild(b);
+          });
+    
+          foot.appendChild(actions);
+          card.appendChild(foot);
+    
+          listWrap.appendChild(card);
+        });
+      }
+    
+      renderTabs();
+      renderOrders();
     }
 
 
@@ -1242,15 +1569,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-
-    // 渲染“我的”左侧菜单
+    // 渲染“我的”左侧菜单（根据当前 URL 自动高亮）
     function renderMyMenu(menu) {
       const sider = document.querySelector('.my-sider');
       if (!sider || !Array.isArray(menu)) return;
     
+      const normalizePath = (p) => (p || '').replace(/\/+$/, ''); // 去掉末尾所有 /
+      const currentPath = normalizePath(window.location.pathname); // ⭐ 关键
+    
       sider.innerHTML = '';
     
-      // 外层 ul
       const ul = document.createElement('ul');
       ul.className = 'my-nav-list';
       sider.appendChild(ul);
@@ -1258,19 +1586,15 @@ document.addEventListener('DOMContentLoaded', () => {
       menu.forEach(item => {
         const hasChildren = Array.isArray(item.children) && item.children.length > 0;
     
-        // li
         const li = document.createElement('li');
         li.className = 'my-nav-item';
         if (hasChildren) li.classList.add('my-nav-item--has-children');
-        if (item.expanded) li.classList.add('is-open');
-        ul.appendChild(li);
     
-        // 顶部 a（图标 + 文本 + 箭头）
+        // 顶级 a
         const a = document.createElement('a');
         a.href = item.href || 'javascript:void(0)';
         a.className = 'my-nav-link';
         if (hasChildren) a.classList.add('my-nav-link--parent');
-        if (item.active) a.classList.add('is-active');
         li.appendChild(a);
     
         const leftBox = document.createElement('div');
@@ -1290,18 +1614,18 @@ document.addEventListener('DOMContentLoaded', () => {
         text.textContent = item.label || '';
         leftBox.appendChild(text);
     
-        let subUl = null;
-    
+        // ===== 子菜单 =====
         if (hasChildren) {
           const arrow = document.createElement('span');
           arrow.className = 'my-nav-arrow';
           arrow.innerHTML = '▾';
           a.appendChild(arrow);
     
-          // 子菜单 ul
-          subUl = document.createElement('ul');
+          const subUl = document.createElement('ul');
           subUl.className = 'my-nav-sublist';
           li.appendChild(subUl);
+    
+          let childMatched = false; // ⭐ 子菜单是否命中当前路径
     
           item.children.forEach(child => {
             const subLi = document.createElement('li');
@@ -1311,15 +1635,37 @@ document.addEventListener('DOMContentLoaded', () => {
             const subA = document.createElement('a');
             subA.href = child.href || '#';
             subA.textContent = child.label || '';
-            if (child.active) subA.classList.add('is-active');
+    
+            // ⭐ 子菜单命中当前 URL：高亮“我买到的”
+            if (child.href && currentPath === normalizePath(child.href)) {
+              subA.classList.add('is-active');
+              childMatched = true;
+            }
+    
             subLi.appendChild(subA);
           });
+    
+          // ⭐ 如果任意子菜单命中：父级保持展开（灰色留在子菜单项上）
+          if (childMatched) {
+            li.classList.add('is-open');
+          } else if (item.expanded) {
+            // 保留 JSON 默认展开逻辑（没有命中时才用）
+            li.classList.add('is-open');
+          }
+        } else {
+          // ===== 无子菜单：只有当前路径命中时才高亮 =====
+          if (item.href && currentPath === normalizePath(item.href)) {
+            a.classList.add('is-active');
+          }
         }
+    
+        ul.appendChild(li);
       });
     
       // 初始化展开高度 & 绑定点击事件
       initMyMenuToggle();
     }
+
     
     // 折叠菜单：高度动画 + 侧边卡片固定高度
     function initMyMenuToggle() {
@@ -1386,4 +1732,35 @@ document.addEventListener('DOMContentLoaded', () => {
     
       // （可选）窗口大小变化时再设一次高度，保证不乱
       window.addEventListener('resize', setCardHeight);
+    }
+
+
+
+    // =============== 价格展示统一格式化（¥ / 整数 / 小数分开） ===============
+    function formatPrice(el) {
+      let value = (el.textContent || '').trim();
+      if (!value) return;
+    
+      // 去掉可能已有的 ¥
+      value = value.replace(/^¥\s*/, '');
+    
+      const [intPart, decRaw] = value.split('.');
+      const decPart = (decRaw != null ? decRaw : '00').padEnd(2, '0');
+    
+      // ⭐ 关键1：给容器加 class，后面用 inline-flex 强制无空隙
+      el.classList.add('price-wrap');
+    
+      // ⭐ 关键2：span 之间不要有任何空白字符
+      el.innerHTML =
+        `<span class="price-symbol">¥</span>` +
+        `<span class="price-int">${intPart}</span>` +
+        `<span class="price-dot">.</span>` +
+        `<span class="price-dec">${decPart}</span>`;
+    }
+    
+    function formatAllPrices() {
+      // 你的项目里会出现价格的三种 class：feed / 我的宝贝 / 订单
+      document
+        .querySelectorAll('.feed-price, .my-good-price, .order-price')
+        .forEach(formatPrice);
     }

@@ -37,7 +37,7 @@
       {
         "icon": "/images/home_ui/order.png",
         "label": "订单",
-        "href": "#"
+        "href": "/myself/buy"
       }
     ]
   },
@@ -1751,7 +1751,7 @@
       "location": "辽宁省",
       "fans": 15,
       "follows": 2,
-      "desc": "要赠礼的记得提前或当天问我，12:00–24:00 在线～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～",
+      "desc": "要赠礼的记得提前或当天问我，12:00–24:00 在线～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～",
       "btn": "编辑资料",
       "bg": "/images/myself/profile-bg.png"
     },
@@ -1771,7 +1771,7 @@
         "children": [
           { "label": "我发布的", "href": "#" },
           { "label": "我卖出的", "href": "#" },
-          { "label": "我买到的", "href": "#" }
+          { "label": "我买到的", "href": "/myself/buy" }
         ]
       },
     
@@ -1800,29 +1800,176 @@
     },
     "goods": [
       {
-        "img": "https://picsum.photos/seed/good-1/260/260",
+        "img": "/images/picsum/guess/guess-7-6.jpg",
         "title": "光遇带跑图，或者代跑 邮寄服务",
+        "titleIcon": "/images/home_ui/baoyou.png",
+        "attrIcon": "/images/home_ui/recent.png",
         "currency": "¥",
-        "price": 5,
-        "unit": "/小时"
+        "price": 25.30,
+        "oldPrice": 1200
       },
       {
-        "img": "https://picsum.photos/seed/good-2/260/260",
+        "img": "/images/picsum/guess/guess-7-7.jpg",
         "title": "口腔清新喷雾 20ml 几乎全新",
+        "titleIcon": "/images/home_ui/baoyou.png",
+        "attrIcon": "/images/home_ui/recent.png",
         "currency": "¥",
-        "price": 20
+        "price": 2,
+        "wish": "2人想要"
       },
       {
-        "img": "https://picsum.photos/seed/good-3/260/260",
+        "img": "/images/picsum/guess/guess-7-8.jpg",
         "title": "房间遮光窗帘一对，自取自提",
+        "titleIcon": "/images/home_ui/baoyou.png",
+        "attrIcon": "/images/home_ui/recent.png",
         "currency": "¥",
-        "price": 40
+        "price": 80,
+        "oldPrice": 100
       },
       {
-        "img": "https://picsum.photos/seed/good-4/260/260",
-        "title": "光遇代肝季蜡 / 心火，长期接单",
+        "img": "/images/picsum/guess/guess-7-9.jpg",
+        "title": "12334567890",
+        "titleIcon": "/images/home_ui/baoyou.png",
+        "attrIcon": "/images/home_ui/recent.png",
         "currency": "¥",
-        "price": 13.14
+        "price": 25.30,
+        "oldPrice": 1200
+      },
+      {
+        "img": "/images/picsum/guess/guess-7-11.jpg",
+        "title": "adafawdsxss",
+        "titleIcon": "/images/home_ui/baoyou.png",
+        "attrIcon": "/images/home_ui/recent.png",
+        "currency": "¥",
+        "price": 111.05
+      },
+      {
+        "img": "/images/picsum/guess/guess-7-10.jpg",
+        "title": "心火，长期接单",
+        "titleIcon": "/images/home_ui/baoyou.png",
+        "attrIcon": "/images/home_ui/recent.png",
+        "currency": "¥",
+        "price": 100,
+        "wish": "32人想要"
+      }
+    ]
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+  "myself_buy": {
+    "menu": [
+      { 
+        "label": "我的闲鱼",
+        "icon": "/images/myself_ui/menu-home.png",
+        "href": "/myself",
+        "active": true 
+      },
+      {
+        "label": "我的交易",
+        "icon": "/images/myself_ui/menu-order.png",
+        "href": "#",
+        "expanded": true,
+        "children": [
+          { "label": "我发布的", "href": "#" },
+          { "label": "我卖出的", "href": "#" },
+          { "label": "我买到的", "href": "/myself/buy" }
+        ]
+      },
+      { 
+        "label": "我的收藏",
+        "icon": "/images/myself_ui/menu-love.png",
+        "href": "#"
+      },
+      {
+        "label": "账户设置",
+        "icon": "/images/myself_ui/menu-setting.png",
+        "href": "#",
+        "expanded": true,
+        "children": [
+          { "label": "个人资料", "href": "#" },
+          { "label": "账号与安全", "href": "#" }
+        ]
+      }
+    ],
+    "orderTabs": [
+      { "id": "all", "label": "全部", "active": true },
+      { "id": "unpaid", "label": "待付款" },
+      { "id": "unshipped", "label": "待发货" },
+      { "id": "unreceived", "label": "待收货" },
+      { "id": "unrated", "label": "待评价" },
+      { "id": "refund", "label": "退款中" }
+    ],
+    "orders": [
+      {
+        "status": "unpaid",
+        "statusText": "等待付款",
+        "sellerName": "艾米的Ai之路",
+        "sellerAvatar": "/images/picsum/guess/guess-4-3.jpg",
+        "productImg": "/images/picsum/avatar/guess/avatar-guess-9-11.jpg",
+        "productTitle": "【代送】自动拉 Team 拼车订阅席位",
+        "currency": "¥",
+        "price": "4.50"
+      },
+      {
+        "status": "unshipped",
+        "statusText": "待发货",
+        "sellerName": "鱼虾一整碗",
+        "sellerAvatar": "/images/picsum/guess/guess-4-4.jpg",
+        "productImg": "/images/picsum/avatar/guess/avatar-guess-9-12.jpg",
+        "productTitle": "【燕云十六声】官服精英战令",
+        "currency": "¥",
+        "price": "66.00"
+      },
+      {
+        "status": "unreceived",
+        "statusText": "待收货",
+        "sellerName": "小白同学",
+        "sellerAvatar": "/images/picsum/guess/guess-4-5.jpg",
+        "productImg": "/images/picsum/avatar/guess/avatar-guess-10-1.jpg",
+        "productTitle": "二手键盘 87 键",
+        "currency": "¥",
+        "price": "128.00"
+      },
+      {
+        "status": "unrated",
+        "statusText": "交易成功",
+        "sellerName": "艾米的Ai之路",
+        "sellerAvatar": "/images/picsum/guess/guess-4-6.jpg",
+        "productImg": "/images/picsum/avatar/guess/avatar-guess-10-2.jpg",
+        "productTitle": "自动拉 Team拼车+team子号订阅席位",
+        "currency": "¥",
+        "price": "4.50"
+      },
+      {
+        "status": "unrated",
+        "statusText": "交易成功",
+        "sellerName": "鱼虾一整碗",
+        "sellerAvatar": "/images/picsum/guess/guess-4-7.jpg",
+        "productImg": "/images/picsum/avatar/guess/avatar-guess-10-3.jpg",
+        "productTitle": "【燕云十六声(充战令)】仅限官服精英战令",
+        "currency": "¥",
+        "price": "66.00"
+      },
+      {
+        "status": "refund",
+        "statusText": "退款中",
+        "sellerName": "数码小铺",
+        "sellerAvatar": "/images/picsum/guess/guess-4-8.jpg",
+        "productImg": "/images/picsum/avatar/guess/avatar-guess-10-4.jpg",
+        "productTitle": "Type-C 数据线",
+        "currency": "¥",
+        "price": "12.90"
       }
     ]
   }

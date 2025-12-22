@@ -663,7 +663,6 @@ html, body {
 
 .feed-wish .old-price {
   color: #999;                  /* 灰色字体 */
-  font-size: 14px;              /* 字体略小 */
   text-decoration: line-through;/* 添加划线 */
 }
 
