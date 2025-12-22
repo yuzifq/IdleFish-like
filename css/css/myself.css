@@ -1,0 +1,899 @@
+/* ========== 我的页面专用样式 ========== */
+/* ========== 固定宽度版本，窗口变窄时出现横向滚动条 ========== */
+html, body {
+  margin: 0;  /* 去除页面默认的外边距 */
+  height: 100%;
+  font-family: "Microsoft YaHei", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* 设置字体 */
+  background: rgb(245, 247, 247);  /* 设置页面背景色为浅灰色 */
+  overflow-x: hidden;  /* 允许页面出现横向滚动条 */
+}
+
+/* 页面内容容器：固定宽度，始终 1040px */
+.page {
+  width: 1040px;  /* 页面宽度固定为1040px */
+  margin: 0 auto;  /* 将页面居中 */
+  box-sizing: border-box;  /* 包括边框和内边距在内的总宽度为1040px */
+}
+
+.viewport {
+  width: 100vw;
+  height: 100vh;            /* 撑满视口 */
+  overflow: auto;           /* 横竖都可滚 */
+  overflow-x: auto;         /* 明确开启横向滚动 */
+}
+
+/* 布局：左边菜单 + 右边内容 */
+.my-wrapper {
+  margin: 16px auto 24px;
+}
+
+.my-page {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 16px;
+}
+
+/* ========== 顶部导航区域样式 ========== */
+.top-bar {
+  background: #ffe60f;  /* 顶部导航栏背景设置为亮黄色 */
+  padding: 0 16px;
+  min-width: 1040px;
+}
+
+.top-bar-main {
+  display: flex;  /* 使用 flex 布局，让子元素水平排列 */
+  align-items: center;  /* 垂直方向居中对齐 */
+  justify-content: space-between;  /* 主轴上左右两端对齐，中间留空 */
+  height: 72px;
+}
+
+/* 顶部右侧整体容器（搜索 + 用户） */
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 98px;           /* 搜索与用户之间的间距 */
+  margin-right: 28px;
+}
+
+/* 我的页面：隐藏搜索栏 */
+.search-container {
+  display: none !important;
+}
+
+/* 我的页面：隐藏搜索下方热搜词 */
+.top-links {
+  display: none !important;
+}
+
+/* 用户信息区（右上角） */
+.user {
+  display: flex;
+  align-items: center;
+  gap: 16px;           /* 图标组间距 */
+  color: #1f1f1f;
+  white-space: nowrap;
+}
+
+.user a {
+  display: flex;
+  align-items: center;
+  gap: 4px;             /* 图标与文字的间距 */
+  text-decoration: none;
+  color: #1f1f1f;
+  font-size: 12px;
+  transition: color 0.2s ease;
+}
+
+.user a:hover {
+  color: #1f1f1f;  /* 悬停时颜色变化（可选） */
+  font-weight: bold;  /* 悬停加粗 */
+}
+
+
+/* 左侧菜单 */
+.my-sider {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px 16px;
+  overflow: hidden;  /* 防止高度动画时内容溢出 */
+  transition: height .3s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* 清除所有菜单 link 的默认边框与轮廓 */
+.my-sider a {
+  text-decoration: none;
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+
+.my-sider-title {
+  font-size: 14px;
+  font-weight: 700;
+  padding: 0 20px 8px;
+  color: #333;
+}
+
+.my-sider-item {
+  display: block;
+  padding: 8px 20px;
+  font-size: 14px;
+  color: #333;
+  text-decoration: none;
+}
+
+.my-sider-item:hover {
+  background: #f5f5f5;
+  color: #f58300;
+}
+
+.my-sider-item.is-active {
+  font-weight: 700;
+  color: #f58300;
+}
+
+.my-sider-divider {
+  margin: 8px 0;
+  border-top: 1px solid #eee;
+}
+
+/* 外层菜单列表 */
+.my-nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* 顶级 li */
+.my-nav-item {
+  margin-bottom: 16px;
+}
+
+.my-nav-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-family: PingFang SC;
+  color: #1f1f1f;
+  font-weight: 600;
+}
+
+/* 悬停背景色 */
+.my-nav-link:hover {
+  background-color: #f5f5f5;
+}
+
+/* 选中（当前页）背景色 */
+.my-nav-link.is-active {
+  background-color: #f5f5f5;
+}
+
+/* 左侧：图标 + 文本 */
+.my-nav-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.my-nav-icon {
+  width: 20px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.my-nav-text {
+  white-space: nowrap;
+}
+
+/* 选中状态 */
+.my-nav-link.is-active {
+  font-weight: 700;
+}
+
+/* 子菜单箭头 */
+.my-nav-arrow {
+  width: 14px;
+  height: 14px;
+  background: url('../images/myself_ui/jiantou.png') center / contain no-repeat;
+  font-size: 0;          /* 隐藏原来的 ▾ 字符 */
+  line-height: 0;
+  transition: transform .2s ease;
+}
+
+
+/* 子菜单 ul：必须可折叠（高度动画 + 隐藏溢出） */
+.my-nav-sublist{
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 0;
+  height: 0;               /* 默认收起 */
+  overflow: hidden;        /* 关键：高度为0时隐藏内容 */
+  transition: height .3s ease;
+}
+
+/* 2) 子菜单每一项：让链接铺满整行，但文字缩进 */
+.my-nav-subitem a{
+  display: block;
+  width: 100%;
+  font-size: 14px;
+  color: #1f1f1f;
+  font-family: PingFang SC;
+  box-sizing: border-box;
+  /* 左侧缩进：48px（对齐到主菜单文字区域附近） */
+  padding: 10px 20px 10px 43px;
+  margin-top: 8px;
+  border-radius: 12px;   /* 你可以自己调圆角 */
+}
+
+/* 3) hover / active 背景就能铺满了 */
+.my-nav-subitem a:hover,
+.my-nav-subitem a.is-active{
+  background-color: #f5f5f5;
+  color: #1f1f1f;
+  font-weight: 600;
+}
+
+/* 展开时：箭头转向、子菜单高度自动 */
+.my-nav-item--has-children.is-open .my-nav-arrow {
+  transform: rotate(180deg);
+}
+
+
+
+
+
+
+/* 右侧主体 */
+.my-main {
+  width: 784px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 个人资料卡片：仿闲鱼样式 */
+.my-profile-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 40px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+
+  /* 去掉底部圆角，避免出现圆弧 */
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  /* 新增背景图效果（完全仿闲鱼） */
+  background-image: url('../images/myself_img/myself_back.png'); /* 换成你的图 */
+  background-repeat: no-repeat;
+  background-size: auto 100%;       /* 高度 = 100%，宽度等比放大，允许比卡片更宽 */
+  background-position: right center;/* 右对齐 + 垂直居中 */
+}
+
+
+/* 左侧头像 + 文案 */
+.my-profile-main {
+  display: flex;
+  align-items: center;
+}
+
+/* 头像 108 × 108 圆形 */
+.my-avatar {
+  width: 109px;
+  height: 109px;
+  border-radius: 50%;
+  margin-right: 24px;
+  object-fit: cover;
+}
+
+/* 文案区 */
+.my-profile-text {
+  width: 510px;
+  margin-right: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 昵称 + 信用标签 一行 */
+.my-nickname-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+/* 昵称 */
+.my-nickname {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1f1f1f;
+}
+
+/* 信用标签容器 */
+.my-level-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;           /* 两个信用条之间的间距 */
+}
+
+/* 信用图片本身 */
+.my-credit-img {
+  object-fit: fill;
+  width: auto;
+  height: 20px;
+}
+
+
+/* 省份 / 粉丝 / 关注 一行排布 */
+.my-profile-meta {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: #666;
+}
+
+/* 行内小文本 */
+.my-profile-meta-item {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+/* 中间那两条竖线分隔 */
+.my-profile-meta-line {
+  width: 1px;
+  height: 12px;
+  background: #e5e5e5;
+}
+
+/* 描述多行文本 */
+.my-profile-desc {
+  color: #666;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 20px;
+  margin-top: 12px;
+  white-space: pre-line; /* 支持 json 里的换行符 */
+}
+
+/* 右侧“编辑资料”按钮 */
+.my-edit-btn {
+  border-radius: 999px;
+  border: none;
+  background: #333333;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  color: #FFFFFf;
+}
+
+.my-edit-btn:hover {
+  filter: brightness(1.03);
+}
+
+
+
+/* profile 与 tabs 中间的分割线 */
+.my-card-divider {
+  margin: 0 16px; /* 左右不贴边 */
+  border-bottom: 1px solid rgba(0, 0, 0, .01);
+}
+
+
+
+/* tabs + 宝贝列表 */
+.my-tabs-card {
+  background: #fff;
+  border-radius: 16px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.my-tabs-header {
+  display: flex;
+  gap: 60px;              /* 两个 tab 的间距 */
+  padding: 0 16px;
+  margin-top: 24px;
+  margin-bottom: 16px;
+  align-items: flex-end;
+}
+
+/* 按钮变成“文字样式”，去掉圆角背景 */
+.my-tab-btn {
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+
+  font-family: PingFang SC;
+  font-size: 16px;
+  color: #666666;
+
+  position: relative;     /* 给下划线定位用 */
+}
+
+/* 包一层：用于数字定位 */
+.my-tab-label {
+  z-index: 2;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 10px;   /* 给下划线留空间 */
+}
+
+/* 左侧文字 */
+.my-tab-text {
+  display: inline-block;
+  color: inherit;
+}
+
+/* 数字：定位到“左侧文字的左上角（上标效果）” */
+.my-tab-count {
+  position: absolute;
+  left: 100%;
+  margin-left: 6px;
+  top: 0;                       /* 从文字顶部算 */
+  transform: translateY(2px);  /* 👈 向下移动 */
+  font-size: 12px;
+  font-weight: 400;
+  color: #999;
+}
+
+/* 下划线：默认不显示 */
+.my-tab-btn::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  bottom: 11px;
+  width: 0%;
+  height: 8px;
+  background: #ffe60f;
+  border-radius: 0;
+  transition: width .18s ease;
+}
+
+/* 激活：文字更深 + 显示下划线 */
+.my-tab-btn.my-tab-active {
+  color: #111;
+  font-size: 18px;
+  font-weight: 800;
+}
+.my-tab-btn.my-tab-active::after {
+  width: 100%;
+}
+
+
+.my-goods-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  padding: 0px 10px 10px;
+}
+
+
+/* ===== 单个卡片样式 ===== */
+.my-good-card {
+  height: 400px;                           /* 固定高度 400px */
+  display: block;                          /* 块级元素，可整块点击 */
+  border-radius: 16px;                     /* 圆角 16px */
+  background: #fff;                        /* 白色背景 */
+  overflow: hidden;                        /* 超出内容隐藏 */
+  transition: box-shadow .3s ease, transform .2s ease; /* 悬停过渡动画 */
+  text-decoration: none;                   /* 去掉下划线 */
+  color: inherit;                          /* 继承文字颜色 */
+}
+
+.my-good-card:hover {
+  box-shadow: 0px 5px 8px 1px rgba(0,0,0,0.1); /* 悬停时加深阴影 */
+}
+
+/* 图片宽度跟随卡片（避免固定 240 导致不贴合网格宽度） */
+.my-good-card > img {
+  width: calc(100% - 6.5px);
+  height: 240px;
+  margin: 3.25px 3.25px 0;
+  border-radius: 14px;
+  object-fit: cover;
+  display: block;
+  background: #f8f8f8;
+}
+
+/* info 容器：对应你图二/图三的 .feed-info */
+.my-good-info {
+  padding: 8px 11.25px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* 标题：两行截断 + 可带左侧小图标 */
+.my-good-title {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #333;
+  height: 3em;                 /* 两行 */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+.my-title-icon {
+  display: inline-block;
+  width: 33.6px;
+  height: 24px;
+  margin-right: 4.8px;
+  vertical-align: text-bottom;
+}
+
+/* 属性行：一张小图（如“最近发布/包邮”等） */
+.my-good-attr {
+  display: flex;
+  align-items: center;
+  min-height: 20px;
+}
+
+.my-attr-icon {
+  height: 19px;
+  width: auto;
+  vertical-align: middle;
+}
+
+.my-attr-placeholder {
+  display: inline-block;
+  width: 85.95px;   /* 和你首页 recent.png 那类图标宽度接近 */
+  height: 19px;
+}
+
+/* 价格行：¥ + 大价格 + 右侧（划线价 / 想要 / unit） */
+.my-good-bottom {
+  display: flex;
+  align-items: baseline;
+  margin-top: 2px;
+}
+
+.my-good-price-symbol {
+  color: #f40;
+  font-size: 16px;
+  font-weight: 700;
+  margin-right: 2px;
+}
+
+.my-good-price {
+  color: #f40;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  font-family: xianyubeta, sans-serif;
+}
+
+.my-good-wish {
+  margin-left: 6px;
+  font-size: 14px;
+  color: #999;
+  line-height: 1;
+}
+
+.my-old-price {
+  color: #999;
+  font-size: 14.4px;
+  margin-left: 4px;
+  text-decoration: line-through;
+}
+
+.my-good-price-unit {
+  font-size: 12px;
+  color: #999;
+}
+
+/* 用户行（仿图二结构：左侧头像 + 名字） */
+.my-good-user {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 3px;
+}
+
+.my-user-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.my-user-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.my-user-name {
+  font-size: 14px;
+  color: #666;
+}
+
+
+
+/* =========================================================
+   通用底部 Footer（和首页一样）
+   ========================================================= */
+
+.footer {
+  width: 100%;
+  background: #2f2f2f;
+  color: #999;
+  font-size: 14px;
+  font-family: "Microsoft YaHei UI", sans-serif;
+  min-width: 1040px;
+}
+.footer a:hover {
+  color: #ffe60f;
+  text-decoration: none;
+}
+.footer-inner {
+  min-width: 1040px;
+  margin: 0 auto;
+  padding: 32px 0px 8px;
+  text-align: center;
+}
+.footer-text {
+  line-height: 1.9;
+  font-size: 12px;
+  line-height: 16px;
+  word-break: break-word;
+}
+.footer-text a {
+  color: #999;
+  margin: 0 6px;
+  text-decoration: none;
+}
+
+/* 分隔符样式（不可交互） */
+.sep {
+  border-left: .5px solid #999;
+  height: 10px;
+  margin: 0 12px;
+  width: 0;
+}
+
+/* 图片 16x16 并与文字垂直居中 */
+.footer-text4 img {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+/* 下方横排区域：图片 + 绿色块 */
+.footer-bottom {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* 举报图片部分 */
+.footer-images {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.footer-images img {
+  height: 48px;
+  object-fit: fill;
+}
+
+/* 绿色块部分 */
+.footer-green {
+  background: radial-gradient(50% 50% at 50% 50%, #f6fffb 0, #e2ffe5 100%);
+  width: 184px;
+  height: 48px;
+}
+
+.green-title {
+  color: #1f1f1f;
+  font-size: 10px;
+  font-weight: 700;
+  height: 16px;
+  padding-top: 2px;
+}
+
+.green-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.green-links a {
+  color: #2454d3;
+  font-size: 8px;
+  line-height: 11px;
+  text-decoration: none;
+}
+.green-links a:hover {
+  color: #2454d3;
+  text-decoration: underline;
+}
+
+/* ========== 右侧悬浮栏整体样式 ========== */
+.toolbar {
+  position: fixed;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #fff;
+  border-radius: 50px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 9px 0;
+  width: 66px;
+  z-index: 99;
+}
+
+.tool-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 8px 0;
+  position: relative;
+}
+
+.tool-item .icon {
+  width: 26px;
+  height: 26px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: relative;
+}
+
+#backToTop {
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+#backToTop[style*="display: flex"] {
+  opacity: 1;
+}
+
+.icon-1 .icon { background-image: url('../images/home_ui/ui-1.apng'); }
+.icon-1:hover .icon { background-image: url('../images/home_ui/ui-11.png'); }
+.icon-2 .icon { background-image: url('../images/home_ui/ui-2.png'); }
+.icon-2:hover .icon { background-image: url('../images/home_ui/ui-22.png'); } 
+.icon-3 .icon { background-image: url('../images/home_ui/ui-3.png'); }
+.icon-3:hover .icon { background-image: url('../images/home_ui/ui-33.png'); } 
+.icon-4 .icon { background-image: url('../images/home_ui/ui-4.png'); }
+.icon-4:hover .icon { background-image: url('../images/home_ui/ui-44.png'); } 
+.icon-5 .icon { background-image: url('../images/home_ui/ui-5.png'); }
+.icon-5:hover .icon { background-image: url('../images/home_ui/ui-55.png'); } 
+.icon-6 .icon { background-image: url('../images/home_ui/ui-6.png'); }
+.icon-6:hover .icon { background-image: url('../images/home_ui/ui-66.png'); } 
+.icon-7 .icon { background-image: url('../images/home_ui/ui-7.png'); }
+.icon-7:hover .icon { background-image: url('../images/home_ui/ui-77.png'); }
+
+.badge {
+  position: absolute;
+  border: #ffffff 2px solid;
+  top: -3px;
+  right: -6px;
+  background: #f43;
+  color: #fff;
+  font-size: 9px;
+  border-radius: 999px;
+  padding: 1px 4px 2px;
+  line-height: 1.2;
+}
+
+.label {
+  font-size: 12px;
+  color: #333;
+  margin-top: 4px;
+}
+
+.toolbar hr {
+  width: 40px; /* 分隔线宽度40px */
+  height: 1px; /* 高度1px */
+  background: #eee; /* 浅灰色分隔线 */
+  border: none; /* 去掉默认边框 */
+  margin: 4px 0; /* 上下外边距4px */
+}
+
+/* ========== APP 二维码悬浮层 ========== */
+.app-qrcode-popover {
+  position: fixed;              /* 固定定位在屏幕右侧中部 */
+  right: 94px;                  /* 预留右侧工具条宽度 */
+  top: 50%;                     /* 垂直居中 */
+  transform: translateY(-50%);  /* 精准垂直居中 */
+  z-index: 100;                 /* 确保浮层在最前面 */
+  display: none;                /* 默认隐藏，悬停时显示 */
+}
+
+.app-qrcode-inner {
+  background: #ffffff;                /* 白色背景 */
+  padding: 20px 14px;                 /* 上下左右间距 */
+  border-radius: 16px;                /* 圆角气泡效果 */
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18); /* 阴影提升浮层层次 */
+  text-align: center;                 /* 内容居中 */
+  font-weight: bold;                  /* 整体文字加粗 */
+}
+
+.app-qrcode-img {
+  width: 114.4px;                     /* 图片宽度 */
+  height: 114.4px;                    /* 图片高度 */
+  display: block;                     /* 消除 inline-block 间距 */
+  margin: 0 auto;                     /* 居中显示 */
+}
+
+.app-qrcode-title {
+  margin-top: 10px;                    /* 与二维码保持间距 */
+  font-size: 16px;                    /* 字号 */
+  color: #1f1f1f;                        /* 深灰色 */
+  font-weight: bold;                  /* 标题部分加粗 */
+}
+
+
+
+/* 视口宽度 >= 1440px 时的宽屏布局 */
+@media (min-width: 1440px) {
+  /* 统一内容区宽度为 1296 */
+  .page{
+    width: 1296px;
+  }
+
+  .my-main {
+    width: 1040px;
+  }
+  
+  .my-profile-text{
+    width: 678px;
+  }
+  
+  .my-profile-card{
+    padding: 40px 60px;
+  }
+  /* feed 区一行显示 5 个 */
+  .my-goods-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+
+/* 视口宽度 >= 1440px 时的宽屏布局 */
+@media (min-width: 1680px) {
+  /* 统一内容区宽度为 1296 */
+  .page{
+    width: 1552px;
+  }
+
+  .my-main {
+    width: 1296px;
+  }
+  
+  .my-profile-text{
+    width: 934px;
+  }
+  
+  .my-profile-card{
+    padding: 40px 60px;
+  }
+  /* feed 区一行显示 5 个 */
+  .my-goods-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
