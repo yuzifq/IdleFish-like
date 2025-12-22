@@ -62,13 +62,19 @@ It is built with **pure HTML, CSS, and JavaScript**, without any frontend framew
 ```text
 .
 ├── index.html              # 页面入口 / Main HTML entry
-├── script.js               # 页面逻辑脚本（数据请求 + 渲染）
+├── myself
+│   ├──index.html           # 我的页面入口 / myself HTML entry
+│   └──buy
+│      └──index.html        # 我的订单页面入口 / myself_buy HTML entry
+├── js               
+│   └──script.js            # 页面逻辑脚本（数据请求 + 渲染）
 ├── home.json               # 数据源（json-server 使用）
 ├── css/
 │   ├── css.css             # 首页样式
 │   ├── myself.css          # “我的”页面样式
 │   └── myself_buy.css      # “我买到的”页面样式
-└── images / fonts / icons  # 图片、字体等静态资源
+├── fonts                   #字体静态资源
+└── images                  # 图片静态资源
 ```
 
 分支说明 Branch Strategy
