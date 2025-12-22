@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
     path.includes('/myself') ||
     /\/myself\/index\.html$/i.test(path) ||
     /\/myself_buy\/index\.html$/i.test(path) ||
-    !!document.querySelector('.my-wrapper') ||
+    !!document.querySelector('.my-wrapperlyl') ||
     !!document.querySelector('.my-page');
 
   if (isMyPage) initMyPage();
@@ -531,7 +531,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderFeeds(feeds) {
       if (!feeds || !Array.isArray(feeds.tabs)) return;
       const tabsWrap = document.querySelector('.feed-tabs');
-      const panelsWrap = document.querySelector('.feed-panels');
+      const panelsWrap = document.querySelector('.feed-panelslyl');
       if (!tabsWrap || !panelsWrap) return;
 
       tabsWrap.innerHTML = '';
@@ -975,7 +975,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
       // ★ 根据当前路径判断是不是“我的”页面
       const path = window.location.pathname || '';
+
       const isMyPage = path.includes('/myself');
+      const isBuyPage =
+        path.includes('/myself/buy') ||
+        /\/myself\/buy\/index\.html$/i.test(path);
     
       // ★ 先按 onlyOn 过滤 item：
       //   - onlyOn: "myself" 只在 myself 页面显示
@@ -983,6 +987,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const items = toolbar.items.filter(item => {
         if (item.onlyOn === 'myself' && !isMyPage) return false;
         if (item.onlyOn === 'home' &&  isMyPage) return false;
+        if (isBuyPage && item.id === 'xianyuAccount') return false;
         return true;
       });
     
@@ -1653,7 +1658,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 渲染“我的”左侧菜单（根据当前 URL 自动高亮）
     function renderMyMenu(menu) {
-      const sider = document.querySelector('.my-sider');
+      const sider = document.querySelector('.my-siderlyl');
       if (!sider || !Array.isArray(menu)) return;
     
       const normalizePath = (p) => (p || '').replace(/\/+$/, ''); // 去掉末尾所有 /
@@ -1751,7 +1756,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 折叠菜单：高度动画 + 侧边卡片固定高度
     function initMyMenuToggle() {
-      const sider  = document.querySelector('.my-sider');               // 白色外框
+      const sider  = document.querySelector('.my-siderlyl');               // 白色外框
       const groups = document.querySelectorAll('.my-nav-item--has-children'); // 有子菜单的两个 li
     
       if (!sider || groups.length === 0) return;
